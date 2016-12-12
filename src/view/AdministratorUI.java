@@ -1,6 +1,5 @@
 package view;
 
-import entity.Administrator;
 import entity.User;
 import manager.impl.UserManagerImpl;
 
@@ -14,7 +13,6 @@ import java.awt.event.MouseEvent;
  */
 public class AdministratorUI extends JFrame{
     AdministratorPanel administratorPanel;
-
     AdministratorUI(){
         administratorPanel = new AdministratorPanel();
         add(administratorPanel);
