@@ -12,4 +12,10 @@ public class UserManagerTest {
         UserManagerImpl userManager = new UserManagerImpl();
         userManager.addUser("test","abc12345","test");
     }
+
+    @Test
+    public void testAddUsers(){
+        UserManagerImpl userManager = new UserManagerImpl();
+        userManager.addUsers("test/data/初始用户登录信息.xls");
+    }
 }

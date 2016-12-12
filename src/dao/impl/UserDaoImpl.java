@@ -44,7 +44,27 @@ public class UserDaoImpl implements IUserDao {
 
     @Override
     public boolean addUsers(List<User> users) {
-        return false;
+        Connection conn = util.getConnection();
+        String sql = "INSERT INTO User(number,password,type) VALUES(?,?,?)";
+        PreparedStatement pst = null;
+        boolean res = false;
+        try{
+            for (User user:users){
+                try {
+                    pst = conn.prepareStatement(sql);
+                    pst.setString(1, user.getNumber());
+                    pst.setString(2, user.getPassword());
+                    pst.setString(3, user.getType());
+                    pst.executeLargeUpdate();
+                }catch (SQLException ee){
+                    ee.printStackTrace();
+                }
+            }
+            res = true;
+        }finally {
+            util.close(null,pst,conn);
+        }
+        return res;
     }
 
     @Override

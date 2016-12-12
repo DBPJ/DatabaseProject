@@ -17,10 +17,21 @@ public interface IUserManager {
     public boolean addUser(String number, String password, String type);
 
     /**
-     * @param users: a batch of users that will be add to DB
+     * @param usersInfo: a batch of users that will be add to DB
      * @return true for add success, false for add fail
      */
-    public boolean addUsers(List<User> users);
+    public boolean addUsers(List<String[]> usersInfo);
+
+    /**
+     * 批量导入数据只支持从 .csv 中导入
+     * excel文件名第一行就需要是数字
+     * 第一列问number
+     * 第二列为password
+     * 第三列为type
+     * @param filename excel文件名
+     * @return 是否导入成功
+     */
+    public boolean addUsers(String filename);
 
     /**
      * @param number: number of the target user

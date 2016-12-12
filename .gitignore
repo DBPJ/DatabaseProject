@@ -1,3 +1,6 @@
 *.iml
 .idea
 *.class
+.DS_Store
+src/library
+test/data
