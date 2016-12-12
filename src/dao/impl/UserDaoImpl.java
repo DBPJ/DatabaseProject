@@ -93,11 +93,39 @@ public class UserDaoImpl implements IUserDao {
 
     @Override
     public boolean deleteUser(String number) {
-        return false;
+        Connection conn = util.getConnection();
+        String sql = "DELETE FROM User where number = ?";
+        PreparedStatement pst = null;
+        boolean res = false;
+        try{
+            pst =conn.prepareStatement(sql);
+            pst.setString(1,number);
+            pst.executeUpdate();
+            res = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(null, pst,conn);
+        }
+        return res;
     }
 
     @Override
     public boolean updateUserInfo(String number, User user) {
-        return false;
+        Connection conn = util.getConnection();
+        String sql = "UPDATE User SET password = ?, type = ? where number = ?";
+        PreparedStatement pst = null;
+        boolean res = false;
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,user.getPassword());
+            pst.setString(2,user.getType());
+            pst.setString(3,number);
+            pst.executeUpdate();
+            res = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

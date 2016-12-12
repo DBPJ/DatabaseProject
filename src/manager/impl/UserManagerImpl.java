@@ -68,25 +68,6 @@ public class UserManagerImpl implements IUserManager {
         } catch (InvalidFormatException | IOException e) {
             e.printStackTrace();
         }
-
-//        try{
-//            BufferedReader br = new BufferedReader(new FileReader(filename));
-//            String line = null;
-//            while ((line = br.readLine())!=null){
-//                User user = new User();
-//                //todo: 逗号分隔符是有问题的，如果账号密码里有逗号就会出错
-//                String [] data = line.split(",");
-//                user.setNumber(data[0]);
-//                user.setPassword(data[1]);
-//                user.setType(data[2]);
-//                System.out.println(line);
-//                System.out.println(data[2]);
-//                users.add(user);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         return userDao.addUsers(users);
     }
 
@@ -107,7 +88,11 @@ public class UserManagerImpl implements IUserManager {
     }
 
     @Override
-    public boolean updateUserInfo(String number, User user) {
+    public boolean updateUserInfo(String number, String password, String type) {
+        User user  = new User();
+        user.setNumber(number);
+        user.setPassword(password);
+        user.setType(type);
         return userDao.updateUserInfo(number, user);
     }
 }

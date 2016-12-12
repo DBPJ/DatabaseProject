@@ -23,7 +23,7 @@ public interface IUserManager {
     public boolean addUsers(List<String[]> usersInfo);
 
     /**
-     * 批量导入数据只支持从 .csv 中导入
+     * 批量导入数据只支持从excel中导入
      * excel文件名第一行就需要是数字
      * 第一列问number
      * 第二列为password
@@ -57,8 +57,9 @@ public interface IUserManager {
 
     /**
      * @param number the number of the user
-     * @param user user with newest information
+     * @param password user with newest information
+     * @param type User type
      * @return true for update success, false for update fail
      */
-    public boolean updateUserInfo(String number, User user);
+    public boolean updateUserInfo(String number,String password, String type);
 }
