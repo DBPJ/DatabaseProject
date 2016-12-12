@@ -6,6 +6,7 @@ import util.JDBCUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -48,7 +49,26 @@ public class UserDaoImpl implements IUserDao {
 
     @Override
     public User queryUser(String number) {
-        return null;
+        Connection conn = util.getConnection();
+        String sql = "SELECT * FROM User where number = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        User user = new User();
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,number);
+            rs = pst.executeQuery();
+            if (rs.next()){
+                user.setNumber(rs.getString("number"));
+                user.setPassword(rs.getString("password"));
+                user.setType(rs.getString("type"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return user;
     }
 
     @Override

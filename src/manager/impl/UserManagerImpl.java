@@ -37,6 +37,12 @@ public class UserManagerImpl implements IUserManager{
     }
 
     @Override
+    public boolean verifyUser(String number, String password) {
+        User user = userDao.queryUser(number);
+        return user.getPassword().equals(password);
+    }
+
+    @Override
     public boolean deleteUser(String number) {
         return userDao.deleteUser(number);
     }

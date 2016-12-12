@@ -28,6 +28,15 @@ public interface IUserManager {
      */
     public User queryUser(String number);
 
+
+    /**
+     * verify sign in info
+     * @param number user number
+     * @param password user password
+     * @return whwether the user is in DB
+     */
+    public boolean verifyUser(String number, String password);
+
     /**
      * @param number: number of the target user
      * @return true for delete success, false for delete fail

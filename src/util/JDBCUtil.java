@@ -25,8 +25,8 @@ public class JDBCUtil {
 
     public JDBCUtil(){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
     }
