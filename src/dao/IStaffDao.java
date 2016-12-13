@@ -14,21 +14,21 @@ public interface IStaffDao {
      * @param staff staff
      * @return add result
      */
-    public boolean addStaff(Staff staff);
+    public boolean addStaff(Director director,Staff staff);
 
     /**
      * delete staff
      * @param number staff number
      * @return delete result
      */
-    public boolean deleteStaff(String number);
+    public boolean deleteStaff(Director director,String number);
 
     /**
      * @param number staff number
      * @param staff staff
      * @return update info
      */
-    public boolean updateStaff(String number, Staff staff);
+    public boolean updateStaff(Director director,String number, Staff staff);
 
     /**
      * @param director director

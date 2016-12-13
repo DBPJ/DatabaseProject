@@ -4,6 +4,11 @@ package entity;
  * Created by alex on 10/12/2016.
  */
 public class User extends Entity {
+
+    /**
+     * User name
+     */
+    private String name;
     /**
      * User number
      */
@@ -18,6 +23,14 @@ public class User extends Entity {
      * User type, e.g. Administrator
      */
     private String type;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getNumber() {
         return number;
