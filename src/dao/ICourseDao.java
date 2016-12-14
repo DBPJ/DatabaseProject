@@ -1,6 +1,9 @@
 package dao;
 
 import entity.Course;
+import entity.Staff;
+import entity.Teacher;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +24,7 @@ public interface ICourseDao {
      * @param grade
      * @return add success or fail
      */
-    public boolean addCourseGrade(String courseID, String staffNumber, Enum grade);
+    public boolean addCourseGrade(String courseID, String staffNumber, String grade);
 
     /**
      * add a batch of grades
@@ -47,12 +50,12 @@ public interface ICourseDao {
 
     /**
      * update grade for staff in the course
-     * @param couseID
+     * @param courseID
      * @param staffNumber
      * @param grade
      * @return
      */
-    public boolean updateCourseGrade(String couseID, String staffNumber, Enum grade);
+    public boolean updateCourseGrade(String courseID, String staffNumber, String grade);
 
     /**
      * @param courseID
@@ -67,21 +70,23 @@ public interface ICourseDao {
      * @param courseID
      * @return a map that the key is staff number and the value is the grade of the staff
      */
-    public Map<String,Enum> queryGrades(String courseID);
+    public Map<String,String> queryGrades(String courseID);
 
     /**
      * get all staff resits
+     * @param teacher querying teacher
      * @param courseID
-     * @return
+     * @return a list of the array of staff number and staff name
      */
-    public Map<String,Enum> queryResits(String courseID);
+    public List<Staff> queryResits(Teacher teacher, String courseID);
 
     /**
      * @param courseID
      * @param number
      * @return resit status of the staff in this course
      */
-    public Enum queryResit(String courseID, String number);
+    public String queryResit(String courseID, String number);
+
 
     /**
      * delete a course
@@ -89,4 +94,6 @@ public interface ICourseDao {
      * @return
      */
     public boolean deleteCourse(String courseID);
+
+    public boolean updateResit(String courseID, String staffNumber, String resit);
 }
