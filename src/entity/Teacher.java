@@ -4,23 +4,23 @@ package entity;
  * Created by alex on 10/12/2016.
  */
 public class Teacher extends User {
-    private Enum gender;
-    private int phoneNumber;
+    private String gender;
+    private long phoneNumber;
     private String email;
 
-    public Enum getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Enum gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public int getPhoneNumber() {
+    public long getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(Long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

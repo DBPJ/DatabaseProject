@@ -16,4 +16,15 @@ public class TeacherManagerImpl implements ITeacherManager{
 
         return teacher;
     }
+
+    @Override
+    public boolean addTeacher(String number, String name, String gender, String phone, String email) {
+        Teacher teacher = new Teacher();
+        teacher.setNumber(number);
+        teacher.setName(name);
+        teacher.setGender(gender);
+        teacher.setPhoneNumber(Long.parseLong(phone));
+        teacher.setEmail(email);
+        return teacherDao.addTeaher(teacher);
+    }
 }

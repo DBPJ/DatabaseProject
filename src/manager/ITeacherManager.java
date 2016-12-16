@@ -13,4 +13,15 @@ public interface ITeacherManager {
      * @return query result
      */
     public Teacher queryTeacher(String number);
+
+    /**
+     *
+     * @param number teacher number
+     * @param name teacher name
+     * @param gender gender
+     * @param phone phone
+     * @param email email
+     * @return result
+     */
+    public boolean addTeacher(String number, String name, String gender, String phone, String email);
 }
