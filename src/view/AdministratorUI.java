@@ -1,6 +1,7 @@
 package view;
 
 import entity.User;
+import manager.impl.TeacherManagerImpl;
 import manager.impl.UserManagerImpl;
 
 import javax.swing.*;
@@ -21,8 +22,9 @@ public class AdministratorUI extends JFrame{
     public static void main(String[] args) {
         AdministratorUI administratorUI = new AdministratorUI();
         administratorUI.setTitle("Administrator");
-        administratorUI.setSize(new Dimension(400,400));
+        administratorUI.setSize(new Dimension(400,500));
         administratorUI.setVisible(true);
+        administratorUI.setResizable(false);
         administratorUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         int w = (Toolkit.getDefaultToolkit().getScreenSize().width - 400) / 2;
         int h = (Toolkit.getDefaultToolkit().getScreenSize().height - 400) / 2;
@@ -39,6 +41,8 @@ class AdministratorPanel extends JPanel{
     JPanel updatePanel;
 
     JPanel queryPanel;
+
+    JPanel addTeacherPanel;
 
 
     AdministratorPanel(){
@@ -75,6 +79,13 @@ class AdministratorPanel extends JPanel{
         c.gridx = 0;
         c.gridy = 4;
         add(queryPanel,c);
+
+        addTeacherPanel = new AddTeacherPanel();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 5;
+        add(addTeacherPanel,c);
+
     }
 
 
@@ -347,4 +358,85 @@ class QueryPanel extends  JPanel{
             }
         });
     }
+}
+
+class AddTeacherPanel extends JPanel{
+    JLabel numberLabel;
+    JTextField numberField;
+    JLabel nameLabel;
+    JTextField nameField;
+    JLabel phoneLabel;
+    JTextField phoneField;
+    JLabel mailLabel;
+    JTextField mailField;
+
+    JLabel genderlabel;
+    JRadioButton maleButton;
+    JRadioButton femaleButton;
+    JButton submit;
+
+    TeacherManagerImpl teacherManager = new TeacherManagerImpl();
+
+    AddTeacherPanel(){
+        numberLabel = new JLabel("Number:");
+        numberField = new JTextField();
+        nameLabel = new JLabel("Name");
+        nameField = new JTextField();
+        phoneLabel = new JLabel("Phone");
+        phoneField = new JTextField();
+        mailLabel = new JLabel("Mail");
+        mailField = new JTextField();
+
+        genderlabel = new JLabel("Gender:");
+        ButtonGroup buttonGroup = new ButtonGroup();
+        maleButton = new JRadioButton("Male");
+        femaleButton = new JRadioButton("Female");
+        buttonGroup.add(maleButton);
+        buttonGroup.add(femaleButton);
+        submit = new JButton("Submit");
+
+        setBorder(BorderFactory.createTitledBorder("Add teacher"));
+        setLayout(new GridLayout(3,4));
+        add(numberLabel);
+        add(numberField);
+        add(nameLabel);
+        add(nameField);
+        add(phoneLabel);
+        add(phoneField);
+        add(mailLabel);
+        add(mailField);
+        add(genderlabel);
+        add(maleButton);
+        add(femaleButton);
+        add(submit);
+
+        submit.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                String gender = "";
+                if (maleButton.isSelected()){
+                    gender = "male";
+                }else if (femaleButton.isSelected()){
+                    gender = "female";
+                }else{
+                    //todo reminder
+                    System.out.println("gender can be null");
+                }
+
+                String number = numberField.getText();
+                String name = nameField.getText();
+                String phone =phoneField.getText();
+                String email = mailField.getText();
+                if (number.equals("") ||name.equals("") || phone.equals("") || email.equals("")){
+                    //todo reminder
+                    System.out.println("info can not be null");
+                }else{
+                    teacherManager.addTeacher(number,name,gender,phone,email);
+                }
+
+            }
+        });
+    }
+
 }
