@@ -22,28 +22,29 @@ public interface IStaffManager {
      * @param additionrate 加成
      * @return true or false
      */
-    public boolean addStaffInfo(String number, String name, Enum gender, String department_name, int work_age, String location, double salary, double additionrate);
+    public boolean addStaffInfo(String number, String name, String gender, String department_name, int work_age, String location, double salary, double additionrate);
 
     /**
      * 根据员工的工号删除信息
      * @param number 员工的工号
      * @return true or false
      */
-    public boolean deleteStaffInfo(String number);
+    public boolean deleteStaffInfo(String department_name, String number);
 
     /**
      * 在修改员工信息时调用,先将初始信息反馈给部门主管
      * @param number 员工工号
+     * @param department_name 部门主管对象
      * @return return a Staff object include the information of the staff
      */
-    public Staff getStaffInfo(String number);
+    public Staff getStaffInfo(String department_name, String number);
 
     /**
      *
      * @param staff 包含一个修改过的员工对象
      * @return success or fail
      */
-    public boolean updateStaffInfo(String number, Staff staff);
+    public boolean updateStaffInfo(String department_name, String number, Staff staff);
 
     /**
      *

@@ -199,6 +199,89 @@ public class StaffDaoImpl implements IStaffDao {
         return null;
     }
 
+    @Override
+    public List<String> queryStaffsCourses(Director director) {
+        Connection conn = util.getConnection();
+        String department_name = director.getDepartmentName();
+        String sql = "SELECT * FROM mydb.Staff where Department_name = \""+ department_name +"\";";
+        Statement stmt = null;
+        String staff_name;
+        String staff_number;
+        String course_name = null;
+        String course_number = null;
+        String grade;
+        ArrayList<Staff> staffs = new ArrayList<>();
+        ArrayList<String[]> infos_rt = new ArrayList<>();
+        try {
+            stmt = conn.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                Staff staff = new Staff();
+                staff_number = rs.getString("number");
+                staff_name = rs.getString("name");
+                staff.setNumber(staff_number);
+                staff.setName(staff_name);
+                staffs.add(staff);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(null,stmt,conn);
+        }
+
+        for(int i = 0 ; i < staffs.size() ; i ++){
+            staff_number = staffs.get(i).getNumber();
+            staff_name = staffs.get(i).getName();
+            try {
+                stmt = conn.createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                sql = "SELECT * FROM mydb.Staff_take_Course where Staff_number = "+ staff_number +";";
+                ResultSet rs = stmt.executeQuery(sql);
+                while(rs.next()) {
+                    course_number = rs.getString("Course_ID");
+                    grade = rs.getString("grade");
+                    String newSql = "SELECT name FROM mydb.Course where ID = "+ course_number + ";";
+                    ResultSet rsNew = stmt.executeQuery(newSql);
+                    if(rsNew.next()){
+                        course_name = rsNew.getString(1);
+                    }
+                    String [] infos = new String[5];
+                    infos[0] = staff_number;
+                    infos[1] = staff_name;
+                    infos[2] = course_number;
+                    infos[3] = course_name;
+                    infos[4] = grade;
+                    infos_rt.add(infos);
+
+                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                util.close(null,stmt,conn);
+            }
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+        return null;
+    }
+
     private Enum getGender(String gender){
         if(gender.equals("male")){
             return Gender.MALE;
