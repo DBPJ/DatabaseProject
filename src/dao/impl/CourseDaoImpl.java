@@ -146,9 +146,31 @@ public class CourseDaoImpl implements ICourseDao {
         return null;
     }
 
+
+    //todo: have not test the method and isCourseSelected
     @Override
     public boolean deleteCourse(String courseID) {
-        return false;
+        boolean selected = isCourseSelected(courseID);
+        boolean res = false;
+        if (selected){
+            //todo: how to reminder user
+            return res;
+        }else{
+            Connection conn = util.getConnection();
+            String sql = "delete from Course where ID = ?";
+            PreparedStatement pst = null;
+            try{
+                pst = conn.prepareStatement(sql);
+                pst.setString(1,courseID);
+                pst.executeUpdate();
+                res = true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                util.close(null,pst,conn);
+            }
+        }
+        return res;
     }
 
     @Override
@@ -186,6 +208,30 @@ public class CourseDaoImpl implements ICourseDao {
                 String teacherNumber = rs.getString("Teacher_number");
                 if (teacher.getNumber().equals(teacherNumber)){
                     res = true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return res;
+    }
+
+    private boolean isCourseSelected(String courseID){
+        Connection conn = util.getConnection();
+        String sql = "select Course_ID from Training_Plan";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        boolean res = false;
+
+        try{
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            while (rs.next()){
+                if (rs.getString("Course_ID").equals(courseID)){
+                    res = true;
+                    break;
                 }
             }
         } catch (SQLException e) {
