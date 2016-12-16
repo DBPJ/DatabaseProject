@@ -4,6 +4,8 @@ import dao.impl.TeacherDaoImpl;
 import entity.Teacher;
 import manager.ITeacherManager;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jindiwei on 2016/12/13.
  */
@@ -15,6 +17,11 @@ public class TeacherManagerImpl implements ITeacherManager{
         Teacher teacher = teacherDao.queryTeacher(number);
 
         return teacher;
+    }
+
+    @Override
+    public ArrayList<Teacher> queryTeacher() {
+        return teacherDao.queryTeacher();
     }
 
     @Override

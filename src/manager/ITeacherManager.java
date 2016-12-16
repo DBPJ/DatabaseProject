@@ -2,6 +2,8 @@ package manager;
 
 import entity.Teacher;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jindiwei on 2016/12/13.
  */
@@ -13,6 +15,12 @@ public interface ITeacherManager {
      * @return query result
      */
     public Teacher queryTeacher(String number);
+
+
+    /**
+     * @return all teacher
+     */
+    public ArrayList<Teacher> queryTeacher();
 
     /**
      *

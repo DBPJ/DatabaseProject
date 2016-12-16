@@ -4,10 +4,8 @@ import dao.ITeacherDao;
 import entity.Teacher;
 import util.JDBCUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
+import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -16,12 +14,65 @@ public class TeacherDaoImpl implements ITeacherDao {
     JDBCUtil util=  new JDBCUtil();
     @Override
     public Teacher queryTeacher(String teacherNumber) {
+        Connection conn = util.getConnection();
+        String sql = "SELECT * FROM mydb.Teacher where number = \""+ teacherNumber +"\";";
+        Statement stmt = null;
+        Teacher teacher = new Teacher();
+        try {
+            stmt = conn.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.next()) {
+                teacher.setNumber(teacherNumber);
+                teacher.setName(rs.getString("name"));
+                return teacher;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            util.close(null,stmt,conn);
+        }
         return null;
     }
 
     @Override
-    public List<Teacher> queryTeacher() {
-        return null;
+    public ArrayList<Teacher> queryTeacher() {
+        Connection conn = util.getConnection();
+        String sql = "SELECT * FROM mydb.Director;";
+        Statement stmt = null;
+        ArrayList<Teacher> teachers = new ArrayList<Teacher>();
+        try {
+            stmt = conn.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.next()) {
+                Teacher teacher = new Teacher();
+                teacher.setNumber(rs.getString("number"));
+                teacher.setName(rs.getString("name"));
+                teacher.setPhoneNumber(rs.getLong("phone_number"));
+                teacher.setEmail(rs.getString("email"));
+                teacher.setGender(rs.getString("gender"));
+                teachers.add(teacher);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            util.close(null,stmt,conn);
+        }
+        if(teachers.size() > 0){
+            return teachers;
+        }
+        else {
+            return null;
+        }
     }
 
     @Override

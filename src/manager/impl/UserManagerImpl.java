@@ -4,9 +4,11 @@ package manager.impl;
  * Created by alex on 10/12/2016.
  */
 
-import dao.impl.DirectorImpl;
+import dao.impl.DirectorDaoImpl;
+import dao.impl.TeacherDaoImpl;
 import dao.impl.UserDaoImpl;
 import entity.Director;
+import entity.Teacher;
 import entity.User;
 import manager.IUserManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -14,7 +16,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import view.AdministratorUI;
 import view.DirectorUI;
+import view.TeacherUI;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -87,13 +91,10 @@ public class UserManagerImpl implements IUserManager {
         if(password.equals(user.getPassword())){
             String type = user.getType();
             if(type.equals("主管")){
-                DirectorImpl directorImpl = new DirectorImpl();
-                Director director = directorImpl.queryDirector(number);
+                DirectorDaoImpl directorDaoImpl = new DirectorDaoImpl();
+                Director director = directorDaoImpl.queryDirector(number);
                 if(director != null) {
-                    System.out.println(director.getName());
-                    System.out.println(director.getNumber());
-                    System.out.println(director.getDepartmentName());
-                    new DirectorUI(director.getNumber(), director.getName(), director.getDepartmentName()).setVisible(true);
+                    new DirectorUI(director).setVisible(true);
                     return true;
                 }
                 else{
@@ -101,7 +102,19 @@ public class UserManagerImpl implements IUserManager {
                 }
             }
             else if(type.equals("系统管理员")){
-                return false;
+                new AdministratorUI().setVisible(true);
+                return true;
+            }
+            else if(type.equals("教师")){
+                TeacherDaoImpl teacherDao = new TeacherDaoImpl();
+                Teacher teacher = teacherDao.queryTeacher(number);
+                if(teacher != null) {
+                    new TeacherUI(teacher).setVisible(true);
+                    return true;
+                }
+                else{
+                    return false;
+                }
             }
             else{
                 return false;

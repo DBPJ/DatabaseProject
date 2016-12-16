@@ -4,6 +4,7 @@ import entity.Course;
 import entity.Director;
 import entity.Staff;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,10 +45,16 @@ public interface IStaffDao {
     public List<Staff> queryStaffByDepartment(Director director);
 
     /**
+     *
+     * @return all staffs
+     */
+    public List<Staff> queryStaffs();
+    /**
      * @param director director
      * @param staff staff
      * @return course list the staff take
      */
+
     public List<Course> queryStaffCourse(Director director,Staff staff);
 
     /**
@@ -64,5 +71,11 @@ public interface IStaffDao {
      * @param director director
      * @return a list contain Staff's name, ID, course name, course grade
      */
-    public List<String> queryStaffsCourses(Director director);
+    public ArrayList<String[]> queryStaffsCourses(Director director);
+
+    /**
+     *
+     * @return all staff and course and grade
+     */
+    public ArrayList<String[]> queryStaffsCourses();
 }
