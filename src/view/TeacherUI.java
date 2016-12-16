@@ -29,8 +29,8 @@ public class TeacherUI extends JFrame {
 
     public static void main(String[] args) {
         Teacher teacher = new Teacher();
-        teacher.setNumber("test");
-        teacher.setName("alex");
+        teacher.setNumber("TR01001");
+        teacher.setName("李敏");
         teacher.setGender("male");
         teacher.setPhoneNumber((long) 12345);
         teacher.setEmail("haha@x.com");
@@ -223,7 +223,7 @@ public class TeacherUI extends JFrame {
             JButton cancel;
             JButton submit;
 
-//    UserManagerImpl userManager = new UserManagerImpl();
+            CourseManagerImpl courseManager = new CourseManagerImpl();
 
             BatchAddCoursePanel() {
                 setLayout(new GridLayout(1, 4));
@@ -251,7 +251,7 @@ public class TeacherUI extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         String filename = filenameField.getText();
-//                userManager.addUsers(filename);
+                        courseManager.addCourses(teacher,filename);
                     }
                 });
             }
@@ -265,6 +265,7 @@ public class TeacherUI extends JFrame {
 
 //    UserManagerImpl userManager = new UserManagerImpl();
 
+            CourseManagerImpl courseManager = new CourseManagerImpl();
             DeleteCoursePanel() {
                 setLayout(new GridLayout(1, 4));
                 courseLabel = new JLabel("Number:");
@@ -291,6 +292,12 @@ public class TeacherUI extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         String number = courseField.getText();
+                        if (number.equals("")){
+                            //todo 提醒为空
+                        }else{
+                            courseManager.deleteCourse(number);
+                        }
+//                        courseManager.
 //                userManager.deleteUser(number);
                     }
                 });

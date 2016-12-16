@@ -19,6 +19,12 @@ public interface ICourseDao {
     public boolean addCourse(Course course);
 
     /**
+     * @param courses 课程列表
+     * @return 结果
+     */
+    public boolean addCourses(List<Course> courses);
+
+    /**
      * @param courseID
      * @param staffNumber
      * @param grade

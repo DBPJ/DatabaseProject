@@ -43,6 +43,32 @@ public class CourseDaoImpl implements ICourseDao {
     }
 
     @Override
+    public boolean addCourses(List<Course> courses) {
+        Connection conn = util.getConnection();
+        String sql = "INSERT INTO Course(ID,name,class_hour,teacher_number) VALUES(?,?,?,?)";
+        PreparedStatement pst = null;
+        boolean res = false;
+        try{
+            for (Course course:courses){
+                try {
+                    pst = conn.prepareStatement(sql);
+                    pst.setString(1,course.getId());
+                    pst.setString(2,course.getName());
+                    pst.setInt(3,course.getClassHour());
+                    pst.setString(4,course.getTeacherNumber());
+                    pst.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            res = true;
+        } finally {
+            util.close(null,pst,conn);
+        }
+        return res;
+    }
+
+    @Override
     public boolean addCourseGrade(String courseID, String staffNumber, String grade) {
         Connection conn = util.getConnection();
         String sql = "UPDATE Staff_take_Course set grade = ? where Course_ID = ? and Staff_number = ?";
@@ -155,6 +181,7 @@ public class CourseDaoImpl implements ICourseDao {
 
 
     //todo: have not test the method and isCourseSelected
+    //todo: 权限检查
     @Override
     public boolean deleteCourse(String courseID) {
         boolean selected = isCourseSelected(courseID);
