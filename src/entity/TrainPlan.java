@@ -9,6 +9,8 @@ public class TrainPlan extends Entity {
      */
     private String courseID;
 
+    private String courseName;
+
     /**
      * the department name
      */
@@ -29,6 +31,14 @@ public class TrainPlan extends Entity {
         this.courseID = courseID;
     }
 
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
     public String getDepartmentName() {
         return departmentName;
     }
@@ -44,4 +54,6 @@ public class TrainPlan extends Entity {
     public void setType(Enum type) {
         this.type = type;
     }
+
+
 }
