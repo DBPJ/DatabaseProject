@@ -19,4 +19,12 @@ public interface ITeacherDao {
      * @return all teacher
      */
     public List<Teacher> queryTeacher();
+
+    /**
+     * add teacher to DB
+     * @param teacher  tacher
+     * @return result
+     */
+    public boolean addTeaher(Teacher teacher);
+
 }
