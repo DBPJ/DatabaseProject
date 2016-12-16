@@ -1,13 +1,9 @@
 package view;
 
 import entity.StaffTakeCourseRecord;
-import entity.Teacher;
-import manager.impl.UserManagerImpl;
-import org.apache.xmlbeans.impl.jam.internal.JamPrinter;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
