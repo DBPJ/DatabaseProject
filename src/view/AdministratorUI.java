@@ -24,6 +24,9 @@ public class AdministratorUI extends JFrame{
         administratorUI.setSize(new Dimension(400,400));
         administratorUI.setVisible(true);
         administratorUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        int w = (Toolkit.getDefaultToolkit().getScreenSize().width - 400) / 2;
+        int h = (Toolkit.getDefaultToolkit().getScreenSize().height - 400) / 2;
+        administratorUI.setLocation(w, h);
     }
 }
 class AdministratorPanel extends JPanel{
@@ -93,7 +96,7 @@ class SingleAddPanel extends JPanel{
     UserManagerImpl userManager = new UserManagerImpl();
 
     SingleAddPanel(){
-        setLayout(new GridLayout(2,4));
+        setLayout(new GridLayout(2,9));
         numberLabel = new JLabel("Number");
         add(numberLabel);
         numberField = new JTextField();
@@ -219,6 +222,7 @@ class DeletePanel extends JPanel{
         });
     }
 }
+
 class  UpdatePanel extends JPanel{
     JLabel numberLabel;
     JLabel passwordLabel;

@@ -4,7 +4,9 @@ package manager.impl;
  * Created by alex on 10/12/2016.
  */
 
+import dao.impl.DirectorImpl;
 import dao.impl.UserDaoImpl;
+import entity.Director;
 import entity.User;
 import manager.IUserManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -12,8 +14,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import view.DirectorUI;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +84,32 @@ public class UserManagerImpl implements IUserManager {
     @Override
     public boolean verifyUser(String number, String password) {
         User user = userDao.queryUser(number);
-        return password.equals(user.getPassword());
+        if(password.equals(user.getPassword())){
+            String type = user.getType();
+            if(type.equals("主管")){
+                DirectorImpl directorImpl = new DirectorImpl();
+                Director director = directorImpl.queryDirector(number);
+                if(director != null) {
+                    System.out.println(director.getName());
+                    System.out.println(director.getNumber());
+                    System.out.println(director.getDepartmentName());
+                    new DirectorUI(director.getNumber(), director.getName(), director.getDepartmentName()).setVisible(true);
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else if(type.equals("系统管理员")){
+                return false;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
     }
 
     @Override

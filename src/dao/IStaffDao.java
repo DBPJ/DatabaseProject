@@ -57,4 +57,12 @@ public interface IStaffDao {
      * @return grade
      */
     public List<Enum> queryStaffGrade(Director director,Staff staff, String courseID);
+
+
+    /**
+     *
+     * @param director director
+     * @return a list contain Staff's name, ID, course name, course grade
+     */
+    public List<String> queryStaffsCourses(Director director);
 }
