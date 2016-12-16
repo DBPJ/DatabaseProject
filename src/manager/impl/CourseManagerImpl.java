@@ -29,8 +29,10 @@ public class CourseManagerImpl implements ICourseManager {
     }
 
     @Override
-    public boolean updateGrade(String ID, String staffNumber, String grade) {
-        return courseDao.updateCourseGrade(ID,staffNumber,grade);
+    public boolean updateGrade(String teachernumber, String ID, String staffNumber, String grade) {
+        Teacher teacher = new Teacher();
+        teacher.setNumber(teachernumber);
+        return courseDao.updateCourseGrade(teacher,ID,staffNumber,grade);
     }
 
     @Override
