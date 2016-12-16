@@ -55,7 +55,7 @@ public interface ICourseDao {
      * @param grade
      * @return
      */
-    public boolean updateCourseGrade(String courseID, String staffNumber, String grade);
+    public boolean updateCourseGrade(Teacher teacher, String courseID, String staffNumber, String grade);
 
     /**
      * @param courseID
