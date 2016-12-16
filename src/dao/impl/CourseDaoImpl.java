@@ -79,7 +79,14 @@ public class CourseDaoImpl implements ICourseDao {
     }
 
     @Override
-    public boolean updateCourseGrade(String courseID, String staffNumber, String grade) {
+    public boolean updateCourseGrade(Teacher teacher, String courseID, String staffNumber, String grade) {
+
+        boolean valiadate = validateAuthority(teacher,courseID);
+        if (!valiadate){
+            //todo: reminder
+            System.out.println("have no authority to update");
+            return false;
+        }
         Connection conn = util.getConnection();
         String sql = "UPDATE Staff_take_Course set grade = ? where Course_ID = ? and Staff_number = ?";
         PreparedStatement pst = null;

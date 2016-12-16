@@ -31,12 +31,13 @@ public interface ICourseManager {
 
     /**
      * 更新用户的成绩，数据库根据触发器自动将resit设为合适的状态
+     * @param teacherNumber teachernumber
      * @param ID 课程名
      * @param staffNumber 员工号
      * @param grade 成绩：pass 或者 fail
      * @return 更新结果
      */
-    public boolean updateGrade(String ID, String staffNumber, String grade);
+    public boolean updateGrade(String teacherNumber, String ID, String staffNumber, String grade);
 
     /**
      *
