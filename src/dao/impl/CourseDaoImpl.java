@@ -98,38 +98,32 @@ public class CourseDaoImpl implements ICourseDao {
 
     @Override
     public List<Course> queryCourses() {
+        List<Course> courses = new ArrayList<>();
         Connection conn = util.getConnection();
-        String sql = "SELECT * FROM mydb.Course;";
-        Statement stmt = null;
-        ArrayList<Course> courses = new ArrayList<Course>();
+        String sql = "select ID, name, class_hour from Course";
+        PreparedStatement pst =null;
+        ResultSet rs = null;
+
         try {
-            stmt = conn.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            ResultSet rs = stmt.executeQuery(sql);
-            while(rs.next()) {
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            while (rs.next()) {
                 Course course = new Course();
-                course.setId(rs.getString("ID"));
-                course.setName(rs.getString("name"));
-                course.setGradeUploadTime(rs.getDate("grade_upload_time"));
-                course.setClassHour(Integer.valueOf(rs.getString("class_hour")));
-                course.setTeacherNumber(rs.getString("Teacher_number"));
+                String ID = rs.getString("ID");
+                String name = rs.getString("name");
+                int clsshour = rs.getInt("class_hour");
+                course.setId(ID);
+                course.setName(name);
+                course.setClassHour(clsshour);
                 courses.add(course);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         finally {
-            util.close(null,stmt,conn);
+            util.close(null,pst,conn);
         }
-        if(courses.isEmpty()){
-            return null;
-        }
-        else{
-            return courses;
-        }
+        return courses;
     }
 
     @Override

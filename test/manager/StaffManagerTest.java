@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,17 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Jindiwei on 2016/12/16.
+ * Created by alex on 17/12/2016.
  */
-public class AddInfos {
+public class StaffManagerTest {
 
-    public static void main(String[] args) {
-        addStaffInfos("test/data/初始员工信息.xls");
+    public void testAddStaff(){
 
     }
 
 
-    public static void addStaffInfos(String filepath){
+    @Test
+    public void addStaffInfos(){
+        String filepath = "test/data/初始员工信息.xls";
         StaffDaoImpl staffDao = new StaffDaoImpl();
         List<User> users = new ArrayList<>();
         InputStream inp = null;
@@ -51,10 +53,9 @@ public class AddInfos {
         } catch (InvalidFormatException | IOException e) {
             e.printStackTrace();
         }
-//        return userDao.addUsers(users);
-
     }
-    private static Enum getGender(String gender){
+
+    private Enum getGender(String gender){
         if(gender.equals("男")){
             return Gender.MALE;
         }
@@ -63,5 +64,3 @@ public class AddInfos {
         }
     }
 }
-
-
