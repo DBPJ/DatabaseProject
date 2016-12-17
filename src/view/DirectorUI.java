@@ -1,17 +1,19 @@
 package view;
 
-import entity.Director;
-import entity.Gender;
-import entity.Staff;
+import entity.*;
+import manager.impl.CourseManagerImpl;
 import manager.impl.StaffManagerImpl;
+import manager.impl.TrainingPlanManager;
 
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 
 //import static view.DirectorUI.loginInfo;
@@ -25,8 +27,8 @@ public class DirectorUI extends JFrame {
         Director director = new Director();
         director.setDepartmentName("人事");
         this.director = director;
-        int width = 1000;
-        int height = 460;
+        int width = 1100;
+        int height = 500;
         setTitle("Director");
         setSize(new Dimension(width, height));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,8 +42,8 @@ public class DirectorUI extends JFrame {
 
     public DirectorUI(Director director) {
         this.director = director;
-        int width = 1000;
-        int height = 460;
+        int width = 1100;
+        int height = 500;
         setTitle("Director");
         setSize(new Dimension(width, height));
         setVisible(true);
@@ -58,17 +60,7 @@ public class DirectorUI extends JFrame {
 
 
     public static void main(String args[]) {
-        int width = 1000;
-        int height = 460;
-        DirectorUI directorUI = new DirectorUI();
-        directorUI.setTitle("Director");
-        directorUI.setSize(new Dimension(width, height));
-        directorUI.setVisible(true);
-        directorUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        int w = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
-        int h = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
-        directorUI.setLocation(w, h);
-
+        new DirectorUI().setVisible(true);
     }
 
 
@@ -587,6 +579,7 @@ public class DirectorUI extends JFrame {
         JLabel j2;
         JLabel j3;
         ResultPanel resultPanel;
+        JButton save;
 
         RightPanel() {
 
@@ -594,25 +587,26 @@ public class DirectorUI extends JFrame {
             String[] choices = {"Courses Staffs Choosed", "Courses Information"};
             choice = new JComboBox(choices);
             commit = new JButton("Commit");
-            nouse = new JPanel();
+            save = new JButton("Save");
+            save.setVisible(false);
             j1 = new JLabel();
             j2 = new JLabel();
             j3 = new JLabel();
             resultPanel = new ResultPanel();
             resultPanel.setBackground(Color.PINK);//为了看出效果，设置了颜色
 
+
             GridBagLayout layout = new GridBagLayout();
             this.setLayout(layout);
             this.add(choose);//把组件添加进jframe
             this.add(choice);
             this.add(commit);
-            this.add(nouse);
+            this.add(save);
             this.add(j1);
             this.add(j2);
             this.add(j3);
-            add(resultPanel);
+            this.add(resultPanel);
             GridBagConstraints s = new GridBagConstraints();
-            s.fill = GridBagConstraints.BOTH;
             s.gridwidth = 1;
             s.weightx = 0;
             s.weighty = 0;
@@ -625,15 +619,15 @@ public class DirectorUI extends JFrame {
             s.weightx = 0;
             s.weighty = 0;
             layout.setConstraints(commit, s);
-            s.gridwidth = 0;
+            s.gridwidth = 1;
             s.weightx = 0;
             s.weighty = 0;
-            layout.setConstraints(nouse, s);
-            s.gridwidth = 2;
+            layout.setConstraints(save, s);
+            s.gridwidth = 1;
             s.weightx = 0;
             s.weighty = 0;
             layout.setConstraints(j1, s);
-            s.gridwidth = 7;
+            s.gridwidth = 1;
             s.weightx = 1;
             s.weighty = 0;
             layout.setConstraints(j2, s);
@@ -642,9 +636,15 @@ public class DirectorUI extends JFrame {
             s.weighty = 0;
             layout.setConstraints(j3, s);
             s.gridwidth = 9;
-            s.weightx = 0;
+            s.weightx = 1;
             s.weighty = 1;
+            s.fill = GridBagConstraints.BOTH;
             layout.setConstraints(resultPanel, s);
+//            s.gridwidth = 9;
+//            s.weightx = 1;
+//            s.weighty = 0;
+//            s.fill = GridBagConstraints.SOUTH;
+//            layout.setConstraints(save, s);
 
 
             commit.addMouseListener(new MouseAdapter() {
@@ -652,7 +652,39 @@ public class DirectorUI extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
                     int selectedIndex = choice.getSelectedIndex();
+                    if(selectedIndex == 1) {
+                        save.setVisible(true);
+                    }
+                    else{
+                        save.setVisible(false);
+                    }
                     resultPanel.change(selectedIndex);
+                }
+
+            });
+
+            save.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    ShowCoursesTableModel stm = (ShowCoursesTableModel)resultPanel.table.getModel();
+                    List<Course> lists = stm.getCourses_list();
+
+                    String course_id;
+                    String department_name;
+                    String type;
+
+
+                    /**
+                     * 将培训计划添加至后台,两种类型: Required  Electives
+                     */
+                    TrainingPlanManager trainingPlanManager = new TrainingPlanManager();
+                    for(int i = 0 ; i < lists.size() ; i ++){
+                        type = (String)stm.getValueAt(i, 3);
+                        if(!type.equals("Other")) { //只保存必修或者选修
+                            trainingPlanManager.addTrainingPlan(lists.get(i).getId(), director.getDepartmentName(), (String) stm.getValueAt(i, 3));
+                        }
+                    }
                 }
 
             });
@@ -662,14 +694,13 @@ public class DirectorUI extends JFrame {
     class ResultPanel extends JPanel {
         JTable table;
         StaffCourseTableModel sctm;
+        ShowCoursesTableModel ctm;
         JScrollPane scrollPane;
+
+        List<TableCellEditor> editors = new ArrayList<TableCellEditor>(1);
 
         ResultPanel() {
             table = new JTable();
-//            StaffManagerImpl staffManager = new StaffManagerImpl();
-//            ArrayList<String[]> courses = staffManager.queryStaffsCourses();
-//            sctm = new StaffCourseTableModel(courses);
-//            table.setModel(sctm);
             scrollPane = new JScrollPane(table);
             add(scrollPane);
         }
@@ -684,31 +715,113 @@ public class DirectorUI extends JFrame {
                     break;
                 }
                 case 1: {
-//                    System.out.println("2222");
-//                    CourseManagerImpl courseManager = new CourseManagerImpl();
-//                    List<Course> teachers = courseManager.queryCourses();
-//                    ttm = new TeacherTableModel(teachers);
-//                    table.setModel(ttm);
-//                    break;
+                    String [] list = {"Required", "Electives", "Other"};
+                    JComboBox<String> comboBox1 = new JComboBox<String>( list );
+                    DefaultCellEditor dce1 = new DefaultCellEditor( comboBox1 );
+                    editors.add( dce1 );
+                    CourseManagerImpl courseManager = new CourseManagerImpl();
+                    List<Course> courseList = courseManager.queryCourses();
+                    ctm = new ShowCoursesTableModel(courseList);
+
+                    TrainingPlanManager trainingPlanManager = new TrainingPlanManager();
+                    /**
+                     * trainPlan 建议type设成三个参数："Required", "Electives", "Other"
+                     */
+                    List<TrainPlan> trainPlans = trainingPlanManager.queryTrainPlans(director);
+                    String course_id;
+                    String course_name;
+                    String type;
+                    int row;
+                    for(int i = 0 ; i < trainPlans.size() ; i ++){
+                        course_id = trainPlans.get(i).getCourseID();
+                        row = getCourseRow(ctm, course_id);
+                        ctm.setValueAt(trainPlans.get(i).getType(), row, 3);
+                    }
+                    table.setModel(ctm);
+
+                    table.getColumn("培训计划").setCellEditor(new MyComboBoxEditor(list));
+                    break;
                 }
             }
         }
+
+
+        public int getCourseRow(ShowCoursesTableModel ctm, String course_id){
+            for(int i = 0 ; i < ctm.getRowCount() ; i ++){
+                if(ctm.getValueAt(i, 0).equals(course_id)){
+                    return i;
+                }
+            }
+            return 0;
+        }
     }
 
+    class MyComboBoxEditor extends DefaultCellEditor {
+        public MyComboBoxEditor(String[] items) {
+            super(new JComboBox(items));
+        }
+    }
 
-    class StaffTableModel implements TableModel {
-        private ArrayList<Staff> staff_list;
+//    private class JTableComBoxEditor implements TableCellEditor{
+//
+//        @Override
+//        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+//            JComboBox combobox = (JComboBox) value;
+//            return combobox;
+//        }
+//
+//        @Override
+//        public Object getCellEditorValue() {
+//            return null;
+//        }
+//
+//        @Override
+//        public boolean isCellEditable(EventObject anEvent) {
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean shouldSelectCell(EventObject anEvent) {
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean stopCellEditing() {
+//            return false;
+//        }
+//
+//        @Override
+//        public void cancelCellEditing() {
+//
+//        }
+//
+//        @Override
+//        public void addCellEditorListener(CellEditorListener l) {
+//
+//        }
+//
+//        @Override
+//        public void removeCellEditorListener(CellEditorListener l) {
+//
+//        }
+//    }
 
-        public StaffTableModel(ArrayList<Staff> list) {
-            this.staff_list = list;
+
+    class ShowCoursesTableModel implements TableModel {
+        private List<Course> courses_list;
+        String[] type ;
+
+        public ShowCoursesTableModel(List<Course> list) {
+            this.courses_list = list;
+            type = new String[]{"Other", "Required", "Electives"};
         }
 
         public int getRowCount() {
-            return staff_list.size();
+            return courses_list.size();
         }
 
         public int getColumnCount() {
-            return 8;
+            return 4;
         }
 
         public Class<?> getColumnClass(int columnIndex) {
@@ -716,53 +829,58 @@ public class DirectorUI extends JFrame {
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
-            Staff user = staff_list.get(rowIndex);
+            Course course = courses_list.get(rowIndex);
             if (columnIndex == 0) {
-                return "" + user.getNumber();
+                return "" + course.getId();
             } else if (columnIndex == 1) {
-                return user.getName();
+                return course.getName();
             } else if (columnIndex == 2) {
-                return "" + user.getGender().name();
+                return "" + course.getClassHour();
             } else if (columnIndex == 3) {
-                return "" + user.getDepartmentName();
-            } else if (columnIndex == 4) {
-                return "" + user.getLocation();
-            } else if (columnIndex == 5) {
-                return "" + user.getWorkAge();
-            } else if (columnIndex == 6) {
-                return "" + user.getSalary();
-            } else if (columnIndex == 7) {
-                return "" + user.getAdditionRate();
-            } else {
+                return type[0];
+//                return "";
+//                return course.get
+
+//                String [] list = {"Equired", "Electives", "Other"};
+//                JComboBox types = new JComboBox(list);
+//                return ;
+//                if (records.get(rowIndex).getStatus().equals("applying")){
+//                    button.setText("Accept");
+//                    button.addMouseListener(new MouseAdapter() {
+//                        @Override
+//                        public void mouseClicked(MouseEvent e) {
+//                            super.mouseClicked(e);
+//                            //todo: add listener to accept staff application
+//                        }
+//                    });
+//                }
+            }
+            else {
                 return "出错!";
             }
         }
 
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
+            String comboBox = (String)aValue;
+            type[rowIndex] = comboBox;
         }
 
         public boolean isCellEditable(int rowIndex, int columnIndex) {
+            if(columnIndex == 3){
+                return true;
+            }
             return false;
         }
 
         public String getColumnName(int columnIndex) {
             if (columnIndex == 0) {
-                return "工 号";
+                return "课程编号";
             } else if (columnIndex == 1) {
-                return "姓 名";
+                return "课程名称";
             } else if (columnIndex == 2) {
-                return "性 别";
+                return "课程学时";
             } else if (columnIndex == 3) {
-                return "部 门";
-            } else if (columnIndex == 4) {
-                return "工作地点";
-            } else if (columnIndex == 5) {
-                return "工 龄";
-            } else if (columnIndex == 6) {
-                return "基本工资";
-            } else if (columnIndex == 7) {
-                return "加成比例";
+                return "培训计划";
             } else {
                 return "出错!";
             }
@@ -773,10 +891,14 @@ public class DirectorUI extends JFrame {
 
         public void removeTableModelListener(TableModelListener l) {
         }
+
+        public List<Course> getCourses_list(){
+            return courses_list;
+        }
     }
 
     class StaffCourseTableModel implements TableModel {
-        private ArrayList<String[]> course_list;
+        private List<String[]> course_list;
 
         public StaffCourseTableModel(ArrayList<String[]> list) {
             this.course_list = list;
@@ -845,6 +967,10 @@ public class DirectorUI extends JFrame {
         }
 
         public void removeTableModelListener(TableModelListener l) {
+        }
+
+        public List<String[]> getCourses_list(){
+            return course_list;
         }
     }
 
