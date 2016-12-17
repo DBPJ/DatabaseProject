@@ -42,4 +42,5 @@ public interface IDirectorManager {
      * @return all director
      */
     public ArrayList<Director> queryDirectors();
+
 }

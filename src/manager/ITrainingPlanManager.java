@@ -1,6 +1,9 @@
 package manager;
 
 import entity.Director;
+import entity.TrainPlan;
+
+import java.util.List;
 
 /**
  * Created by alex on 17/12/2016.
@@ -13,4 +16,11 @@ public interface ITrainingPlanManager {
      * @return
      */
     public boolean addTrainingPlan(String courseID, String departmentName, String type);
+
+
+    /**
+     *
+     * @return all train plan
+     */
+    public List<TrainPlan> queryTrainPlanes(Director director);
 }

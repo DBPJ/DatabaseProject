@@ -38,6 +38,8 @@ public class TrainingPlanDaoImpl implements ITrainPlanDao {
 
     @Override
     public List<TrainPlan> queryTrainPlans(Director director) {
+        Connection conn = util.getConnection();
+        String sql = "select * from Training_Plan";
         return null;
     }
 }

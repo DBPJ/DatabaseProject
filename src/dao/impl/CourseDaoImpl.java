@@ -6,10 +6,7 @@ import entity.Staff;
 import entity.Teacher;
 import util.JDBCUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +107,7 @@ public class CourseDaoImpl implements ICourseDao {
         try {
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Course course = new Course();
                 String ID = rs.getString("ID");
                 String name = rs.getString("name");
@@ -122,6 +119,9 @@ public class CourseDaoImpl implements ICourseDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        finally {
+            util.close(null,pst,conn);
         }
         return courses;
     }

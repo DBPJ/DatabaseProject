@@ -15,9 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import view.AdministratorUI;
-import view.DirectorUI;
-import view.TeacherUI;
+import view.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -116,8 +114,8 @@ public class UserManagerImpl implements IUserManager {
                     }
                 default:
                     return false;
+                }
             }
-        }
     }
 
     @Override
