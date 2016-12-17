@@ -57,9 +57,8 @@ public class StaffManagerImpl implements IStaffManager {
     }
 
     @Override
-    public ArrayList<String[]> getCourseTakenInfo(String department) {
-//
-        return null;
+    public ArrayList<String[]> getCourseTakenInfo(Director director) {
+        return staffDao.queryStaffsCourses(director);
     }
 
     @Override

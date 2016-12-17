@@ -6,9 +6,13 @@ import entity.Staff;
 import manager.impl.StaffManagerImpl;
 
 import javax.swing.*;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 
 //import static view.DirectorUI.loginInfo;
 
@@ -16,8 +20,12 @@ import java.awt.event.MouseEvent;
  * Created by Jindiwei on 2016/12/15.
  */
 public class DirectorUI extends JFrame {
+    Director director;
     public DirectorUI() {
-        int width = 800;
+        Director director = new Director();
+        director.setDepartmentName("人事");
+        this.director = director;
+        int width = 1000;
         int height = 460;
         setTitle("Director");
         setSize(new Dimension(width, height));
@@ -31,7 +39,8 @@ public class DirectorUI extends JFrame {
     }
 
     public DirectorUI(Director director) {
-        int width = 800;
+        this.director = director;
+        int width = 1000;
         int height = 460;
         setTitle("Director");
         setSize(new Dimension(width, height));
@@ -49,7 +58,7 @@ public class DirectorUI extends JFrame {
 
 
     public static void main(String args[]) {
-        int width = 800;
+        int width = 1000;
         int height = 460;
         DirectorUI directorUI = new DirectorUI();
         directorUI.setTitle("Director");
@@ -570,60 +579,275 @@ public class DirectorUI extends JFrame {
      * this panel is on the right
      */
     class RightPanel extends JPanel {
-        ResultPanel resultPanel = new ResultPanel();
+        JLabel choose;
+        JComboBox choice;
+        JButton commit;
+        JPanel nouse;
+        JLabel j1;
+        JLabel j2;
+        JLabel j3;
+        ResultPanel resultPanel;
 
         RightPanel() {
-            JLabel j1;
-            JComboBox j2;
-            JButton j3;
-            JPanel j4;
-            JPanel j9;
-            j1 = new JLabel("Choose : ");
+
+            choose = new JLabel("Choose : ");
             String[] choices = {"Courses Staffs Choosed", "Courses Information"};
-            j2 = new JComboBox(choices);
-            j3 = new JButton("Commit");
-            j4 = new JPanel();
-            j9 = new ResultPanel();
-            j9.setBackground(Color.PINK);//为了看出效果，设置了颜色
+            choice = new JComboBox(choices);
+            commit = new JButton("Commit");
+            nouse = new JPanel();
+            j1 = new JLabel();
+            j2 = new JLabel();
+            j3 = new JLabel();
+            resultPanel = new ResultPanel();
+            resultPanel.setBackground(Color.PINK);//为了看出效果，设置了颜色
 
             GridBagLayout layout = new GridBagLayout();
-            setLayout(layout);
-            add(j1);//把组件添加进jframe
-            add(j2);
-            add(j3);
-            add(j4);
-            add(j9);
+            this.setLayout(layout);
+            this.add(choose);//把组件添加进jframe
+            this.add(choice);
+            this.add(commit);
+            this.add(nouse);
+            this.add(j1);
+            this.add(j2);
+            this.add(j3);
+            add(resultPanel);
             GridBagConstraints s = new GridBagConstraints();
             s.fill = GridBagConstraints.BOTH;
             s.gridwidth = 1;
             s.weightx = 0;
             s.weighty = 0;
-            layout.setConstraints(j1, s);
-            s.gridwidth = 2;
-            s.weightx = 0;
-            s.weighty = 0;
-            layout.setConstraints(j2, s);
+            layout.setConstraints(choose, s);
             s.gridwidth = 1;
             s.weightx = 0;
             s.weighty = 0;
-            layout.setConstraints(j3, s);
+            layout.setConstraints(choice, s);
+            s.gridwidth = 1;
+            s.weightx = 0;
+            s.weighty = 0;
+            layout.setConstraints(commit, s);
             s.gridwidth = 0;
             s.weightx = 0;
             s.weighty = 0;
-            layout.setConstraints(j4, s);
-            s.gridwidth = 5;
+            layout.setConstraints(nouse, s);
+            s.gridwidth = 2;
+            s.weightx = 0;
+            s.weighty = 0;
+            layout.setConstraints(j1, s);
+            s.gridwidth = 7;
+            s.weightx = 1;
+            s.weighty = 0;
+            layout.setConstraints(j2, s);
+            s.gridwidth = 0;
+            s.weightx = 0;
+            s.weighty = 0;
+            layout.setConstraints(j3, s);
+            s.gridwidth = 9;
             s.weightx = 0;
             s.weighty = 1;
-            layout.setConstraints(j9, s);
+            layout.setConstraints(resultPanel, s);
+
+
+            commit.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    int selectedIndex = choice.getSelectedIndex();
+                    resultPanel.change(selectedIndex);
+                }
+
+            });
         }
     }
 
     class ResultPanel extends JPanel {
-        ResultPanel() {
+        JTable table;
+        StaffCourseTableModel sctm;
+        JScrollPane scrollPane;
 
+        ResultPanel() {
+            table = new JTable();
+//            StaffManagerImpl staffManager = new StaffManagerImpl();
+//            ArrayList<String[]> courses = staffManager.queryStaffsCourses();
+//            sctm = new StaffCourseTableModel(courses);
+//            table.setModel(sctm);
+            scrollPane = new JScrollPane(table);
+            add(scrollPane);
+        }
+
+        public void change(int index) {
+            switch (index) {
+                case 0: {
+                    StaffManagerImpl staffManager = new StaffManagerImpl();
+                    ArrayList<String[]> courses = staffManager.getCourseTakenInfo(director);
+                    sctm = new StaffCourseTableModel(courses);
+                    table.setModel(sctm);
+                    break;
+                }
+                case 1: {
+//                    System.out.println("2222");
+//                    CourseManagerImpl courseManager = new CourseManagerImpl();
+//                    List<Course> teachers = courseManager.queryCourses();
+//                    ttm = new TeacherTableModel(teachers);
+//                    table.setModel(ttm);
+//                    break;
+                }
+            }
         }
     }
-}
 
+
+    class StaffTableModel implements TableModel {
+        private ArrayList<Staff> staff_list;
+
+        public StaffTableModel(ArrayList<Staff> list) {
+            this.staff_list = list;
+        }
+
+        public int getRowCount() {
+            return staff_list.size();
+        }
+
+        public int getColumnCount() {
+            return 8;
+        }
+
+        public Class<?> getColumnClass(int columnIndex) {
+            return String.class;
+        }
+
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            Staff user = staff_list.get(rowIndex);
+            if (columnIndex == 0) {
+                return "" + user.getNumber();
+            } else if (columnIndex == 1) {
+                return user.getName();
+            } else if (columnIndex == 2) {
+                return "" + user.getGender().name();
+            } else if (columnIndex == 3) {
+                return "" + user.getDepartmentName();
+            } else if (columnIndex == 4) {
+                return "" + user.getLocation();
+            } else if (columnIndex == 5) {
+                return "" + user.getWorkAge();
+            } else if (columnIndex == 6) {
+                return "" + user.getSalary();
+            } else if (columnIndex == 7) {
+                return "" + user.getAdditionRate();
+            } else {
+                return "出错!";
+            }
+        }
+
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+        }
+
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
+        }
+
+        public String getColumnName(int columnIndex) {
+            if (columnIndex == 0) {
+                return "工 号";
+            } else if (columnIndex == 1) {
+                return "姓 名";
+            } else if (columnIndex == 2) {
+                return "性 别";
+            } else if (columnIndex == 3) {
+                return "部 门";
+            } else if (columnIndex == 4) {
+                return "工作地点";
+            } else if (columnIndex == 5) {
+                return "工 龄";
+            } else if (columnIndex == 6) {
+                return "基本工资";
+            } else if (columnIndex == 7) {
+                return "加成比例";
+            } else {
+                return "出错!";
+            }
+        }
+
+        public void addTableModelListener(TableModelListener l) {
+        }
+
+        public void removeTableModelListener(TableModelListener l) {
+        }
+    }
+
+    class StaffCourseTableModel implements TableModel {
+        private ArrayList<String[]> course_list;
+
+        public StaffCourseTableModel(ArrayList<String[]> list) {
+            this.course_list = list;
+        }
+
+        public int getRowCount() {
+            return course_list.size();
+        }
+
+        public int getColumnCount() {
+            //System.out.println("this is : 6");
+            return 6;
+        }
+
+        public Class<?> getColumnClass(int columnIndex) {
+            return String.class;
+        }
+
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            String[] course = course_list.get(rowIndex);
+            if (columnIndex == 0) {
+                return "" + course[0];
+            } else if (columnIndex == 1) {
+                return course[1];
+            } else if (columnIndex == 2) {
+                return "" + course[2];
+            } else if (columnIndex == 3) {
+                return "" + course[3];
+            } else if (columnIndex == 4) {
+                return "" + course[4];
+            } else if (columnIndex == 5) {
+                return "" + course[5];
+            } else {
+                return "出错!";
+            }
+        }
+
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            String info = rowIndex + "行" + columnIndex + "列的值改变: " + aValue.toString();
+            javax.swing.JOptionPane.showMessageDialog(null, info);
+        }
+
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
+        }
+
+        public String getColumnName(int columnIndex) {
+            if (columnIndex == 0) {
+                return "工 号";
+            } else if (columnIndex == 1) {
+                return "部 门";
+            } else if (columnIndex == 2) {
+                return "姓 名";
+            } else if (columnIndex == 3) {
+                return "课程编号";
+            } else if (columnIndex == 4) {
+                return "课程名称";
+            } else if (columnIndex == 5) {
+                return "成绩";
+            } else {
+                return "出错!";
+            }
+        }
+
+        public void addTableModelListener(TableModelListener l) {
+        }
+
+        public void removeTableModelListener(TableModelListener l) {
+        }
+    }
+
+}
 
 

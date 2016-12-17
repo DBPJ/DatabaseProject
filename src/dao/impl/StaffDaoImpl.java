@@ -150,6 +150,39 @@ public class StaffDaoImpl implements IStaffDao {
     }
 
     @Override
+    public Staff queryStaff(String number) {
+        Connection conn = util.getConnection();
+        String sql = "SELECT * FROM mydb.Staff where number = \""+ number +"\";";
+        Statement stmt = null;
+        Staff staff = new Staff();
+        try {
+            stmt = conn.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.next()) {
+                staff.setNumber(rs.getString("number"));
+                staff.setName(rs.getString("name"));
+                staff.setGender(getGender(rs.getString("gender")));
+                staff.setWorkAge(rs.getInt("work_age"));
+                staff.setLocation(rs.getString("location"));
+                staff.setSalary(rs.getDouble("salary"));
+                staff.setAdditionRate(rs.getDouble("additionrate"));
+                staff.setDepartmentName(rs.getString("Department_name"));
+                return staff;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            util.close(null,stmt,conn);
+        }
+        return null;
+    }
+
+    @Override
     public List<Staff> queryStaffByDepartment(Director director) {
         Connection conn = util.getConnection();
         String department_name = director.getDepartmentName();
@@ -243,7 +276,9 @@ public class StaffDaoImpl implements IStaffDao {
         Connection conn = util.getConnection();
         String department_name = director.getDepartmentName();
         String sql = "SELECT * FROM mydb.Staff where Department_name = \""+ department_name +"\";";
+        ResultSet rs = null;
         Statement stmt = null;
+
         String staff_name = null;
         String staff_department = null;
         String staff_number = null;
@@ -252,64 +287,96 @@ public class StaffDaoImpl implements IStaffDao {
         String grade;
         ArrayList<Staff> staffs = new ArrayList<>();
         ArrayList<String[]> infos_rt = new ArrayList<>();
+        ArrayList<String> course_id = new ArrayList<>();
+        ArrayList<String> course_grade = new ArrayList<>();
         try {
             stmt = conn.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         try {
-            ResultSet rs = stmt.executeQuery(sql);
-            while(rs.next()) {
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
                 Staff staff = new Staff();
                 staff_number = rs.getString("number");
-                staff_department = rs.getString("Department_name");
                 staff_name = rs.getString("name");
                 staff.setNumber(staff_number);
                 staff.setName(staff_name);
+                staff.setDepartmentName(rs.getString("Department_name"));
+                staff_department = rs.getString("Department_name");
                 staffs.add(staff);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            util.close(null,stmt,conn);
+        } finally {
+            util.close(rs, stmt, conn);
         }
 
-        for(int i = 0 ; i < staffs.size() ; i ++){
+        for (int i = 0; i < staffs.size(); i++) {
+            Connection new_con = util.getConnection();
+            Statement new_stmt = null;
+            ResultSet new_rs = null;
             staff_number = staffs.get(i).getNumber();
             staff_name = staffs.get(i).getName();
+
             try {
-                stmt = conn.createStatement();
+                new_stmt = new_con.createStatement();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             try {
-                sql = "SELECT * FROM mydb.Staff_take_Course where Staff_number = "+ staff_number +";";
-                ResultSet rs = stmt.executeQuery(sql);
-                while(rs.next()) {
-                    course_number = rs.getString("Course_ID");
-                    grade = rs.getString("grade");
-                    String newSql = "SELECT name FROM mydb.Course where ID = "+ course_number + ";";
-                    ResultSet rsNew = stmt.executeQuery(newSql);
-                    if(rsNew.next()){
-                        course_name = rsNew.getString(1);
-                    }
-                    String [] infos = new String[6];
-                    infos[0] = staff_number;
-                    infos[1] = staff_department;
-                    infos[2] = staff_name;
-                    infos[3] = course_number;
-                    infos[4] = course_name;
-                    infos[5] = grade;
-                    infos_rt.add(infos);
-
-                 }
+                sql = "SELECT * FROM mydb.Staff_take_Course where Staff_number = \"" + staff_number + "\";";
+                new_rs = new_stmt.executeQuery(sql);
+                while (new_rs.next()) {
+                    course_number = new_rs.getString("Course_ID");
+                    grade = new_rs.getString("grade");
+                    course_id.add(course_number);
+                    course_grade.add(grade);
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
-            }finally {
-                util.close(null,stmt,conn);
+            } finally {
+                util.close(new_rs, new_stmt, new_con);
             }
         }
-        return null;
+
+
+        for(int i = 0 ; i < course_id.size() ; i ++){
+            Connection new_con = util.getConnection();
+            Statement new_stmt = null;
+            ResultSet new_rs = null;
+            try {
+                new_stmt = new_con.createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                String newSql = "SELECT name FROM mydb.Course where ID = \"" + course_id.get(i) + "\";";
+                ResultSet rsNew = new_stmt.executeQuery(newSql);
+                if (rsNew.next()) {
+                    course_name = rsNew.getString(1);
+                }
+                String[] infos = new String[6];
+                System.out.println(staff_number);
+                infos[0] = staff_number;
+                System.out.println(staff_department);
+                infos[1] = staff_department;
+                System.out.println(staff_name);
+                infos[2] = staff_name;
+                System.out.println(course_id.get(i));
+                infos[3] = course_id.get(i);
+                System.out.println(course_name);
+                infos[4] = course_name;
+                System.out.println(course_grade.get(i));
+                infos[5] = course_grade.get(i);
+                infos_rt.add(infos);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                util.close(new_rs, new_stmt, new_con);
+            }
+        }
+        return infos_rt;
     }
 
     public ArrayList<String[]> queryStaffsCourses() {

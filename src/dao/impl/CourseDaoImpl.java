@@ -6,10 +6,7 @@ import entity.Staff;
 import entity.Teacher;
 import util.JDBCUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +98,38 @@ public class CourseDaoImpl implements ICourseDao {
 
     @Override
     public List<Course> queryCourses() {
-        return null;
+        Connection conn = util.getConnection();
+        String sql = "SELECT * FROM mydb.Course;";
+        Statement stmt = null;
+        ArrayList<Course> courses = new ArrayList<Course>();
+        try {
+            stmt = conn.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                Course course = new Course();
+                course.setId(rs.getString("ID"));
+                course.setName(rs.getString("name"));
+                course.setGradeUploadTime(rs.getDate("grade_upload_time"));
+                course.setClassHour(Integer.valueOf(rs.getString("class_hour")));
+                course.setTeacherNumber(rs.getString("Teacher_number"));
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            util.close(null,stmt,conn);
+        }
+        if(courses.isEmpty()){
+            return null;
+        }
+        else{
+            return courses;
+        }
     }
 
     @Override

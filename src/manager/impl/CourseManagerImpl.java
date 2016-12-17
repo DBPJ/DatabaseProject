@@ -4,7 +4,6 @@ import dao.impl.CourseDaoImpl;
 import entity.Course;
 import entity.Staff;
 import entity.Teacher;
-import entity.User;
 import manager.ICourseManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -89,6 +88,11 @@ public class CourseManagerImpl implements ICourseManager {
     public boolean deleteCourse(String courseID) {
         //todo: 在courseDao中没有做权限校验
         return courseDao.deleteCourse(courseID);
+    }
+
+    @Override
+    public List<Course> queryCourses() {
+        return courseDao.queryCourses();
     }
 
 

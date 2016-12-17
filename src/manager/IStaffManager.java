@@ -1,6 +1,7 @@
 package manager;
 
 import entity.Course;
+import entity.Director;
 import entity.Staff;
 
 import java.util.ArrayList;
@@ -49,10 +50,10 @@ public interface IStaffManager {
 
     /**
      *
-     * @param department 部门主管所在的部门名称
+     * @param director 部门主管
      * @return 包含员工选课情况的ArrayList 包括:工号;姓名;课程名称;成绩
      */
-    public ArrayList<String []> getCourseTakenInfo(String department);
+    public ArrayList<String []> getCourseTakenInfo(Director director);
 
     /**
      * 获得已开设的课程的信息

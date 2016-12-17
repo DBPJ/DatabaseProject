@@ -1,11 +1,11 @@
 package view;
 
 import entity.Course;
+import entity.Staff;
 import entity.StaffTakeCourseRecord;
 import entity.TrainPlan;
 
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -20,18 +20,37 @@ import java.util.List;
  */
 public class StaffUI extends JFrame {
     StaffPanel staffPanel;
-    StaffUI(){
+    Staff staff;
+    public StaffUI(){
+        int width = 800;
+        int height = 600;
+        setTitle("Staff");
+        setSize(new Dimension(width, height));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        int w = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
+        int h = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
+        setLocation(w, h);
+        setVisible(true);
+        staffPanel = new StaffPanel();
+        add(staffPanel);
+    }
+    public StaffUI(Staff staff){
+        this.staff = staff;
+        int width = 800;
+        int height = 600;
+        setTitle("Staff");
+        setSize(new Dimension(width, height));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        int w = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
+        int h = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
+        setLocation(w, h);
+        setVisible(true);
         staffPanel = new StaffPanel();
         add(staffPanel);
     }
 
     public static void main(String[] args) {
-        StaffUI staffUI = new StaffUI();
-        staffUI.setTitle("Staff");
-        staffUI.setVisible(true);
-        staffUI.setSize(new Dimension(800,600));
-        staffUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        staffUI.pack();
+        new StaffUI().setVisible(true);
     }
 
     class StaffPanel extends JPanel {
