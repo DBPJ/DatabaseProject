@@ -38,6 +38,14 @@ public interface IStaffDao {
      */
     public Staff queryStaff(Director director,String number);
 
+
+    /**
+     * @param number staff number
+     * @return staff
+     */
+    public Staff queryStaff(String number);
+
+
     /**
      * @param director director
      * @return staff list

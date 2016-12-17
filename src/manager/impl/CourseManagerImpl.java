@@ -5,7 +5,16 @@ import entity.Course;
 import entity.Staff;
 import entity.Teacher;
 import manager.ICourseManager;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +30,36 @@ public class CourseManagerImpl implements ICourseManager {
         course.setClassHour(classHour);
         course.setTeacherNumber(teacherNumber);
         return courseDao.addCourse(course);
+    }
+
+    @Override
+    public boolean addCourses(Teacher teacher, String filename) {
+        //todo 可以过测试，但是在UI界面中无法操作，路径有问题，打成jar估计可以解决
+        List<Course> courses = new ArrayList<>();
+        InputStream inp = null;
+        try {
+            inp = new FileInputStream(filename);
+            Workbook wb = WorkbookFactory.create(inp);
+            Sheet sheet = wb.getSheetAt(0);
+            for (int i = sheet.getFirstRowNum()+1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                Course course = new Course();
+                String teacherNumber = row.getCell(1).getStringCellValue();
+                if (teacher.getNumber().equals(teacherNumber)){
+                    course.setId(row.getCell(0).getStringCellValue());
+                    course.setTeacherNumber(teacherNumber);
+                    course.setName(row.getCell(2).getStringCellValue());
+                    course.setClassHour((int) row.getCell(3).getNumericCellValue());
+                    courses.add(course);
+                }else{
+                    //todo:提示没有权限
+                    System.out.println("don't have authority to add this course");
+                }
+            }
+        } catch (InvalidFormatException | IOException e) {
+            e.printStackTrace();
+        }
+        return courseDao.addCourses(courses);
     }
 
     @Override
@@ -43,6 +82,17 @@ public class CourseManagerImpl implements ICourseManager {
     @Override
     public boolean acceptResit(String courseID, String staffNumber) {
         return false;
+    }
+
+    @Override
+    public boolean deleteCourse(String courseID) {
+        //todo: 在courseDao中没有做权限校验
+        return courseDao.deleteCourse(courseID);
+    }
+
+    @Override
+    public List<Course> queryCourses() {
+        return courseDao.queryCourses();
     }
 
 

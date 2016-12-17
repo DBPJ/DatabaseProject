@@ -1,5 +1,6 @@
 package manager;
 
+import entity.Course;
 import entity.Staff;
 import entity.Teacher;
 
@@ -19,6 +20,15 @@ public interface ICourseManager {
      * @return 操作结果是否成功
      */
     public boolean addCourse(String ID, String name, int classHour, String teacherNumber);
+
+
+    /**
+     *
+     * @param teacher 批量添加课程的老师，用于检查权限
+     * @param filename 文件名
+     * @return
+     */
+    public boolean addCourses(Teacher teacher, String filename);
 
     /**
      * 上传用户的成绩，数据库根据触发器自动将resit设为合适的状态
@@ -54,4 +64,13 @@ public interface ICourseManager {
      * @return 接受结果
      */
     public boolean acceptResit(String courseID, String staffNumber);
+
+    /**
+     *
+     * @param courseID
+     * @return
+     */
+    public boolean deleteCourse(String courseID);
+
+    public List<Course> queryCourses();
 }

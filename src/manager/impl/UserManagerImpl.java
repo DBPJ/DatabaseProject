@@ -5,9 +5,11 @@ package manager.impl;
  */
 
 import dao.impl.DirectorDaoImpl;
+import dao.impl.StaffDaoImpl;
 import dao.impl.TeacherDaoImpl;
 import dao.impl.UserDaoImpl;
 import entity.Director;
+import entity.Staff;
 import entity.Teacher;
 import entity.User;
 import manager.IUserManager;
@@ -16,9 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import view.AdministratorUI;
-import view.DirectorUI;
-import view.TeacherUI;
+import view.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -115,6 +115,17 @@ public class UserManagerImpl implements IUserManager {
                 else{
                     return false;
                 }
+            }
+            else if(type.equals("员工")){
+                StaffDaoImpl staffDao = new StaffDaoImpl();
+                Staff staff = staffDao.queryStaff(number);
+                new StaffUI(staff).setVisible(true);
+                return true;
+            }
+            else if(type.equals("CEO")){
+                new CEOUI().setVisible(true);
+                return true;
+
             }
             else{
                 return false;

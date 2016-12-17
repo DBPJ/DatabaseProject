@@ -5,6 +5,7 @@ package entity;
  */
 public class StaffTakeCourseRecord {
     private String courseID;
+    private String courseName;
     private String staffNumber;
     private String grade;
     private String status;
@@ -15,6 +16,14 @@ public class StaffTakeCourseRecord {
 
     public void setCourseID(String courseID) {
         this.courseID = courseID;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public String getStaffNumber() {
