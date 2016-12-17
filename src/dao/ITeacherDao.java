@@ -2,7 +2,7 @@ package dao;
 
 import entity.Teacher;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by alex on 10/12/2016.
@@ -18,7 +18,7 @@ public interface ITeacherDao {
     /**
      * @return all teacher
      */
-    public List<Teacher> queryTeacher();
+    public ArrayList<Teacher> queryTeacher();
 
     /**
      * add teacher to DB

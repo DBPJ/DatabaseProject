@@ -1,13 +1,14 @@
-package dao;
+package manager;
 
 import entity.Director;
 
 import java.util.ArrayList;
 
 /**
- * Created by alex on 10/12/2016.
+ * Created by Jindiwei on 2016/12/17.
  */
-public interface IDirectorDao {
+public interface IDirectorManager {
+
     /**
      * @param director director
      * @return

@@ -27,6 +27,13 @@ public class TeacherUI extends JFrame {
         this.teacher = teacher;
         courseManager = new CourseManagerImpl();
         teacherPanel = new TeacherPanel();
+        setTitle("Teacher");
+        setSize(new Dimension(800, 600));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        int w = (Toolkit.getDefaultToolkit().getScreenSize().width - 800) / 2;
+        int h = (Toolkit.getDefaultToolkit().getScreenSize().height - 600) / 2;
+        setLocation(w, h);
+        setVisible(true);
         add(teacherPanel);
     }
 

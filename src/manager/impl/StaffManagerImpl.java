@@ -72,6 +72,16 @@ public class StaffManagerImpl implements IStaffManager {
         return false;
     }
 
+    @Override
+    public ArrayList<Staff> queryStaffs() {
+        return staffDao.queryStaffs();
+    }
+
+    @Override
+    public ArrayList<String[]> queryStaffsCourses() {
+        return staffDao.queryStaffsCourses();
+    }
+
     private Enum getGender(String gender){
         if(gender.equals("male")){
             return Gender.MALE;

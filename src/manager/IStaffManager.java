@@ -4,6 +4,7 @@ import entity.Course;
 import entity.Staff;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -66,5 +67,14 @@ public interface IStaffManager {
      * @return true or false
      */
     public boolean setTrainingPlan(String department_name, int[] course_ids);
+
+    public List<Staff> queryStaffs();
+
+
+    /**
+     *
+     * @return all staff and course and grade
+     */
+    public ArrayList<String[]> queryStaffsCourses();
 
 }
