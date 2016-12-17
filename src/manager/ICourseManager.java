@@ -1,5 +1,6 @@
 package manager;
 
+import entity.Course;
 import entity.Staff;
 import entity.Teacher;
 
@@ -70,4 +71,11 @@ public interface ICourseManager {
      * @return
      */
     public boolean deleteCourse(String courseID);
+
+    /**
+     *
+     * @return 全部课程
+     */
+    public List<Course> queryCourses();
+
 }

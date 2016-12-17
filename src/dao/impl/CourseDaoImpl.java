@@ -101,7 +101,29 @@ public class CourseDaoImpl implements ICourseDao {
 
     @Override
     public List<Course> queryCourses() {
-        return null;
+        List<Course> courses = new ArrayList<>();
+        Connection conn = util.getConnection();
+        String sql = "select ID, name, class_hour from Course";
+        PreparedStatement pst =null;
+        ResultSet rs = null;
+
+        try {
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            while (rs.next()){
+                Course course = new Course();
+                String ID = rs.getString("ID");
+                String name = rs.getString("name");
+                int clsshour = rs.getInt("class_hour");
+                course.setId(ID);
+                course.setName(name);
+                course.setClassHour(clsshour);
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
     }
 
     @Override

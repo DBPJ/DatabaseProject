@@ -6,7 +6,6 @@ import entity.Teacher;
 import manager.impl.CourseManagerImpl;
 
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -81,6 +80,7 @@ public class TeacherUI extends JFrame {
             model = new CourseStaffModel();
             jTable = new JTable(model);
             TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+
             jTable.getColumn("Operation").setCellRenderer(buttonRenderer);
             JScrollPane scrollPane = new JScrollPane(jTable);
             rightPanel.add(courseLabel);
@@ -126,19 +126,19 @@ public class TeacherUI extends JFrame {
 
         }
 
-        private void addRecord(){
-            for (int i =0;i<20;i++) {
+        private void addRecord() {
+            for (int i = 0; i < 20; i++) {
                 StaffTakeCourseRecord stcr = new StaffTakeCourseRecord();
-                stcr.setCourseID("id_"+i);
-                stcr.setStaffNumber("staff_"+i);
-                if (i%5==0){
+                stcr.setCourseID("id_" + i);
+                stcr.setStaffNumber("staff_" + i);
+                if (i % 5 == 0) {
                     stcr.setGrade("pass");
-                }else{
+                } else {
                     stcr.setGrade("fail");
                 }
-                if(i%2==0){
+                if (i % 2 == 0) {
                     stcr.setStatus("applying");
-                }else{
+                } else {
                     stcr.setStatus("test");
                 }
                 model.addRecord(stcr);
@@ -147,11 +147,13 @@ public class TeacherUI extends JFrame {
 
 
         private class JTableButtonRenderer implements TableCellRenderer {
-            @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                JButton button = (JButton)value;
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JButton button = (JButton) value;
                 return button;
             }
         }
+
         class AddCoursePanel extends JPanel {
             JLabel courseIDLabel;
             JTextField courseField;
@@ -191,7 +193,7 @@ public class TeacherUI extends JFrame {
                         String course = courseField.getText();
                         String name = nameField.getText();
                         String classHour = classHourField.getText();
-                        courseManager.addCourse(course,name,Integer.parseInt(classHour),teacher.getNumber());
+                        courseManager.addCourse(course, name, Integer.parseInt(classHour), teacher.getNumber());
                     }
                 });
             }
@@ -243,16 +245,16 @@ public class TeacherUI extends JFrame {
                         String course = courseField.getText();
                         String staff = staffField.getText();
                         String grade = null;
-                        if (pass.isSelected()){
+                        if (pass.isSelected()) {
                             grade = "pass";
-                        }else if (fail.isSelected()){
+                        } else if (fail.isSelected()) {
                             grade = "fail";
-                        }else{
+                        } else {
                             //todo reminder
                             System.out.println("grade is not select");
                         }
 
-                        courseManager.updateGrade(teacher.getNumber(),course,staff,grade);
+                        courseManager.updateGrade(teacher.getNumber(), course, staff, grade);
                     }
                 });
             }
@@ -292,7 +294,7 @@ public class TeacherUI extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         String filename = filenameField.getText();
-                        courseManager.addCourses(teacher,filename);
+                        courseManager.addCourses(teacher, filename);
                     }
                 });
             }
@@ -305,6 +307,7 @@ public class TeacherUI extends JFrame {
             JButton submit;
 
             CourseManagerImpl courseManager = new CourseManagerImpl();
+
             DeleteCoursePanel() {
                 setLayout(new GridLayout(1, 4));
                 courseLabel = new JLabel("Number:");
@@ -331,9 +334,9 @@ public class TeacherUI extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         String number = courseField.getText();
-                        if (number.equals("")){
+                        if (number.equals("")) {
                             //todo 提醒为空
-                        }else{
+                        } else {
                             courseManager.deleteCourse(number);
                         }
                     }
@@ -361,8 +364,7 @@ public class TeacherUI extends JFrame {
 
             //设置每一列的名字
             @Override
-            public String getColumnName(int column)
-            {
+            public String getColumnName(int column) {
                 return columns[column];
             }
 
@@ -395,7 +397,7 @@ public class TeacherUI extends JFrame {
                         break;
                     case 4:
                         JButton button = new JButton();
-                        if (records.get(rowIndex).getStatus().equals("applying")){
+                        if (records.get(rowIndex).getStatus().equals("applying")) {
                             button.setText("Accept");
                             button.addMouseListener(new MouseAdapter() {
                                 @Override
@@ -418,7 +420,7 @@ public class TeacherUI extends JFrame {
                 this.records = records;
             }
 
-            public void addRecord(StaffTakeCourseRecord record){
+            public void addRecord(StaffTakeCourseRecord record) {
                 this.records.add(record);
             }
         }

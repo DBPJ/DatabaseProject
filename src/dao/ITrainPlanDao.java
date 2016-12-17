@@ -10,11 +10,10 @@ import java.util.List;
  */
 public interface ITrainPlanDao {
     /**
-     * @param director director
      * @param trainPlan train plan
      * @return add result
      */
-    public boolean addTrainPlan(Director director,TrainPlan trainPlan);
+    public boolean addTrainPlan(TrainPlan trainPlan);
 
     /**
      * @param director director

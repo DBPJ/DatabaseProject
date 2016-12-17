@@ -21,7 +21,7 @@ public class TrainPlan extends Entity {
      * CourseType.REQUIRED: all staff of the department have to learn the course
      * CourseType.ELECTIVE: staff of the department can choose whether to study this course
      */
-    private Enum type;
+    private String type;
 
     public String getCourseID() {
         return courseID;
@@ -47,11 +47,11 @@ public class TrainPlan extends Entity {
         this.departmentName = departmentName;
     }
 
-    public Enum getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Enum type) {
+    public void setType(String type) {
         this.type = type;
     }
 

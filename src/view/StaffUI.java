@@ -3,9 +3,9 @@ package view;
 import entity.Course;
 import entity.StaffTakeCourseRecord;
 import entity.TrainPlan;
+import manager.impl.CourseManagerImpl;
 
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -89,39 +89,6 @@ public class StaffUI extends JFrame {
             add(leftPanel);
             add(rightPanel);
 
-
-//            add(selectPanel);
-//            add(trainingPlanPanel);
-//            add(coursePanel);
-//            add(gradePanel);
-//
-//            GridBagLayout layout = new GridBagLayout();
-//            setLayout(layout);
-//            GridBagConstraints s = new GridBagConstraints();
-//            s.fill = GridBagConstraints.NONE;
-//            s.gridwidth = 1;
-//            s.weightx = 0;
-//            s.weighty = 0;
-//            layout.setConstraints(selectPanel,s);
-//            s.fill = GridBagConstraints.BOTH;
-//            s.gridwidth = 0;
-//            s.weightx = 1;
-//            s.weighty = 1;
-//            layout.setConstraints(trainingPlanPanel,s);
-//            s.fill = GridBagConstraints.BOTH;
-//            s.gridwidth = 1;
-////            s.gridx = 1;
-////            s.gridy = 0;
-//            s.weightx = 1;
-//            s.weighty = 1;
-//            layout.setConstraints(coursePanel,s);
-//            s.fill = GridBagConstraints.BOTH;
-//            s.gridwidth = 0;
-////            s.gridx = 1;
-////            s.gridy = 0;
-//            s.weightx = 1;
-//            s.weighty = 1;
-//            layout.setConstraints(gradePanel,s);
         }
     }
 
@@ -130,6 +97,7 @@ public class StaffUI extends JFrame {
         JTextField courseField;
         JButton cancel;
         JButton submit;
+
 
         SelectPanel() {
             courseLabel = new JLabel("Course number:");
@@ -150,6 +118,7 @@ public class StaffUI extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
                     courseField.setText("");
+
                 }
             });
 
@@ -157,7 +126,8 @@ public class StaffUI extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
-                    //todo: add mouse listener
+//                    todo: add mouse listener
+
                 }
             });
         }
@@ -170,7 +140,12 @@ public class StaffUI extends JFrame {
         CourseModel courseModel;
         JScrollPane scrollPane;
 
+        CourseManagerImpl courseManager;
+
+
         CoursePanel() {
+            courseManager = new CourseManagerImpl();
+
             hide = new JButton("Hide");
             show = new JButton("Show");
             courseModel = new CourseModel();
@@ -200,6 +175,24 @@ public class StaffUI extends JFrame {
             s.weightx = 1;
             s.weighty = 1;
             layout.setConstraints(scrollPane, s);
+
+            hide.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    courseModel.setCourses(new ArrayList<>());
+                }
+            });
+
+            show.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    List<Course> courses = courseManager.queryCourses();
+                    courseModel.setCourses(courses);
+                    courseModel.fireTableDataChanged();
+                }
+            });
 
         }
     }
@@ -344,6 +337,10 @@ public class StaffUI extends JFrame {
 
         public void addCourse(Course course) {
             this.courses.add(course);
+        }
+
+        public void setCourses(List<Course> courses) {
+            this.courses = courses;
         }
     }
 

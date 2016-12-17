@@ -91,5 +91,10 @@ public class CourseManagerImpl implements ICourseManager {
         return courseDao.deleteCourse(courseID);
     }
 
+    @Override
+    public List<Course> queryCourses() {
+        return courseDao.queryCourses();
+    }
+
 
 }

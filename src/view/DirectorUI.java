@@ -149,7 +149,6 @@ public class DirectorUI extends JFrame {
             c.fill = GridBagConstraints.EAST;
             c.gridx = 0;
             c.gridy = 2;
-//        deleteStaffPanel.setBounds(0, 400, 440, 80);
             add(deleteStaffPanel, c);
 
             c.fill = GridBagConstraints.EAST;
