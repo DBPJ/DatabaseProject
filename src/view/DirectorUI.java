@@ -715,7 +715,7 @@ public class DirectorUI extends JFrame {
                     break;
                 }
                 case 1: {
-                    String [] list = {"Required", "Electives", "Other"};
+                    String [] list = {"equired", "electives", "other"};
                     JComboBox<String> comboBox1 = new JComboBox<String>( list );
                     DefaultCellEditor dce1 = new DefaultCellEditor( comboBox1 );
                     editors.add( dce1 );
@@ -724,9 +724,6 @@ public class DirectorUI extends JFrame {
                     ctm = new ShowCoursesTableModel(courseList);
 
                     TrainingPlanManager trainingPlanManager = new TrainingPlanManager();
-                    /**
-                     * trainPlan 建议type设成三个参数："Required", "Electives", "Other"
-                     */
                     List<TrainPlan> trainPlans = trainingPlanManager.queryTrainPlans(director);
                     String course_id;
                     String course_name;
@@ -762,58 +759,17 @@ public class DirectorUI extends JFrame {
         }
     }
 
-//    private class JTableComBoxEditor implements TableCellEditor{
-//
-//        @Override
-//        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-//            JComboBox combobox = (JComboBox) value;
-//            return combobox;
-//        }
-//
-//        @Override
-//        public Object getCellEditorValue() {
-//            return null;
-//        }
-//
-//        @Override
-//        public boolean isCellEditable(EventObject anEvent) {
-//            return false;
-//        }
-//
-//        @Override
-//        public boolean shouldSelectCell(EventObject anEvent) {
-//            return false;
-//        }
-//
-//        @Override
-//        public boolean stopCellEditing() {
-//            return false;
-//        }
-//
-//        @Override
-//        public void cancelCellEditing() {
-//
-//        }
-//
-//        @Override
-//        public void addCellEditorListener(CellEditorListener l) {
-//
-//        }
-//
-//        @Override
-//        public void removeCellEditorListener(CellEditorListener l) {
-//
-//        }
-//    }
-
-
     class ShowCoursesTableModel implements TableModel {
         private List<Course> courses_list;
         String[] type ;
 
         public ShowCoursesTableModel(List<Course> list) {
             this.courses_list = list;
-            type = new String[]{"Other", "Required", "Electives"};
+            type = new String[list.size()];
+            for(int i = 0 ; i < list.size() ; i++){
+                type[i] = "type";
+            }
+
         }
 
         public int getRowCount() {
@@ -838,22 +794,6 @@ public class DirectorUI extends JFrame {
                 return "" + course.getClassHour();
             } else if (columnIndex == 3) {
                 return type[0];
-//                return "";
-//                return course.get
-
-//                String [] list = {"Equired", "Electives", "Other"};
-//                JComboBox types = new JComboBox(list);
-//                return ;
-//                if (records.get(rowIndex).getStatus().equals("applying")){
-//                    button.setText("Accept");
-//                    button.addMouseListener(new MouseAdapter() {
-//                        @Override
-//                        public void mouseClicked(MouseEvent e) {
-//                            super.mouseClicked(e);
-//                            //todo: add listener to accept staff application
-//                        }
-//                    });
-//                }
             }
             else {
                 return "出错!";
@@ -973,7 +913,7 @@ public class DirectorUI extends JFrame {
             return course_list;
         }
     }
-
 }
+
 
 
