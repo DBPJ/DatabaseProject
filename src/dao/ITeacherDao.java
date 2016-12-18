@@ -1,8 +1,10 @@
 package dao;
 
+import entity.StaffTakeCourseRecord;
 import entity.Teacher;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by alex on 10/12/2016.
@@ -26,5 +28,15 @@ public interface ITeacherDao {
      * @return result
      */
     public boolean addTeaher(Teacher teacher);
+
+    /**
+     *
+     * @param staffNumber
+     * @param courseID
+     * @return
+     */
+    public boolean acceptResit(String staffNumber, String courseID);
+
+    public List<StaffTakeCourseRecord> queryCourseGrades(String teacherNumber);
 
 }

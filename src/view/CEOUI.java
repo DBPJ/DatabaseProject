@@ -2,6 +2,7 @@ package view;
 
 import entity.Director;
 import entity.Staff;
+import entity.StaffTakeCourseRecord;
 import entity.Teacher;
 import manager.impl.DirectorManagerImpl;
 import manager.impl.StaffManagerImpl;
@@ -9,11 +10,13 @@ import manager.impl.TeacherManagerImpl;
 
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -124,6 +127,10 @@ public class CEOUI extends JFrame {
         ResultPanel() {
             table = new JTable();
             scrollPane = new JScrollPane(table);
+            stm = new StaffTableModel();
+            ttm = new TeacherTableModel();
+            dtm = new DirectorTableModel();
+            sctm = new StaffCourseTableModel();
             add(scrollPane);
         }
 
@@ -153,9 +160,13 @@ public class CEOUI extends JFrame {
                 }
                 case 3: {
                     StaffManagerImpl staffManager = new StaffManagerImpl();
-                    ArrayList<String[]> courses = staffManager.queryStaffsCourses();
-                    sctm = new StaffCourseTableModel(courses);
-                    table.setModel(sctm);
+//                    ArrayList<String[]> courses = staffManager.queryStaffsCourses();
+//                    sctm = new StaffCourseTableModel(courses);
+//                    table.setModel(sctm);
+                    List<StaffTakeCourseRecord> courseRecords = staffManager.queryStaffCourseGrades();
+                    sctm.setRecords(courseRecords);
+                    sctm.fireTableDataChanged();
+                    table.setModel(sctm );
                     break;
                 }
             }
@@ -169,6 +180,10 @@ public class CEOUI extends JFrame {
 
     class StaffTableModel implements TableModel {
         private ArrayList<Staff> staff_list;
+
+        public StaffTableModel() {
+
+        }
 
         public StaffTableModel(ArrayList<Staff> list) {
             this.staff_list = list;
@@ -244,10 +259,21 @@ public class CEOUI extends JFrame {
 
         public void removeTableModelListener(TableModelListener l) {
         }
+
+        public ArrayList<Staff> getStaff_list() {
+            return staff_list;
+        }
+
+        public void setStaff_list(ArrayList<Staff> staff_list) {
+            this.staff_list = staff_list;
+        }
     }
 
     class TeacherTableModel implements TableModel {
         private ArrayList<Teacher> teachers_list;
+
+        public TeacherTableModel() {
+        }
 
         public TeacherTableModel(ArrayList<Teacher> list) {
             this.teachers_list = list;
@@ -310,11 +336,23 @@ public class CEOUI extends JFrame {
 
         public void removeTableModelListener(TableModelListener l) {
         }
+
+        public ArrayList<Teacher> getTeachers_list() {
+            return teachers_list;
+        }
+
+        public void setTeachers_list(ArrayList<Teacher> teachers_list) {
+            this.teachers_list = teachers_list;
+        }
     }
 
 
     class DirectorTableModel implements TableModel {
         private ArrayList<Director> director_list;
+
+
+        public DirectorTableModel() {
+        }
 
         public DirectorTableModel(ArrayList<Director> list) {
             this.director_list = list;
@@ -385,18 +423,31 @@ public class CEOUI extends JFrame {
 
         public void removeTableModelListener(TableModelListener l) {
         }
+
+        public ArrayList<Director> getDirector_list() {
+            return director_list;
+        }
+
+        public void setDirector_list(ArrayList<Director> director_list) {
+            this.director_list = director_list;
+        }
     }
 
 
-    class StaffCourseTableModel implements TableModel {
-        private ArrayList<String[]> course_list;
+    class StaffCourseTableModel extends AbstractTableModel {
+//        private ArrayList<String[]> course_list;
 
-        public StaffCourseTableModel(ArrayList<String[]> list) {
-            this.course_list = list;
+        private List<StaffTakeCourseRecord> records;
+
+        public StaffCourseTableModel(List<StaffTakeCourseRecord> list) {
+            this.records = list;
+        }
+
+        public StaffCourseTableModel() {
         }
 
         public int getRowCount() {
-            return course_list.size();
+            return records.size();
         }
 
         public int getColumnCount() {
@@ -408,21 +459,22 @@ public class CEOUI extends JFrame {
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
-            String[] course = course_list.get(rowIndex);
-            if (columnIndex == 0) {
-                return "" + course[0];
-            } else if (columnIndex == 1) {
-                return course[1];
-            } else if (columnIndex == 2) {
-                return "" + course[2];
-            } else if (columnIndex == 3) {
-                return "" + course[3];
-            } else if (columnIndex == 4) {
-                return "" + course[4];
-            } else if (columnIndex == 5) {
-                return "" + course[5];
-            } else {
-                return "出错!";
+            StaffTakeCourseRecord record = records.get(rowIndex);
+            switch (columnIndex) {
+                case 0:
+                    return record.getStaffNumber();
+                case 1:
+                    return record.getStaffDepart();
+                case 2:
+                    return record.getStaffName();
+                case 3:
+                    return record.getCourseID();
+                case 4:
+                    return record.getCourseName();
+                case 5:
+                    return record.getGrade();
+                default:
+                    return null;
             }
         }
 
@@ -453,10 +505,12 @@ public class CEOUI extends JFrame {
             }
         }
 
-        public void addTableModelListener(TableModelListener l) {
+        public List<StaffTakeCourseRecord> getRecords() {
+            return records;
         }
 
-        public void removeTableModelListener(TableModelListener l) {
+        public void setRecords(List<StaffTakeCourseRecord> records) {
+            this.records = records;
         }
     }
 }

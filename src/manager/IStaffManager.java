@@ -3,6 +3,7 @@ package manager;
 import entity.Course;
 import entity.Director;
 import entity.Staff;
+import entity.StaffTakeCourseRecord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,4 +79,27 @@ public interface IStaffManager {
      */
     public ArrayList<String[]> queryStaffsCourses();
 
+
+    /**
+     *
+     * @param staffNumber
+     * @return
+     */
+    public List<StaffTakeCourseRecord> queryCourseRecords(String staffNumber);
+
+
+    public StaffTakeCourseRecord queryCourseRecord(String courseID, String staffNumber);
+
+    /**
+     *
+     * @param staffNumber
+     * @param courseID
+     * @return
+     */
+    public boolean applyResit(String staffNumber, String courseID);
+
+
+    public List<StaffTakeCourseRecord> queryStaffCourseGrades();
+
+    public Staff queryStaff(String staffNumber);
 }

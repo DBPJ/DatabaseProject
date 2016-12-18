@@ -11,6 +11,8 @@ public class TrainPlan extends Entity {
 
     private String courseName;
 
+    private int classHour;
+
     /**
      * the department name
      */
@@ -55,5 +57,11 @@ public class TrainPlan extends Entity {
         this.type = type;
     }
 
+    public int getClassHour() {
+        return classHour;
+    }
 
+    public void setClassHour(int classHour) {
+        this.classHour = classHour;
+    }
 }

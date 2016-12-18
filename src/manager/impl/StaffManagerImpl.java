@@ -1,13 +1,12 @@
 package manager.impl;
 
+import dao.impl.CourseDaoImpl;
 import dao.impl.StaffDaoImpl;
-import entity.Course;
-import entity.Director;
-import entity.Gender;
-import entity.Staff;
+import entity.*;
 import manager.IStaffManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -81,6 +80,34 @@ public class StaffManagerImpl implements IStaffManager {
         return staffDao.queryStaffsCourses();
     }
 
+    @Override
+    public List<StaffTakeCourseRecord> queryCourseRecords(String staffNumber) {
+        Staff staff = new Staff();
+        staff.setNumber(staffNumber);
+        return staffDao.queryCourseRecords(staff);
+    }
+
+    @Override
+    public StaffTakeCourseRecord queryCourseRecord(String courseID, String staffNumber) {
+        return staffDao.queryCourseRecord(courseID,staffNumber);
+    }
+
+
+    @Override
+    public boolean applyResit(String staffNumber, String courseID) {
+        return staffDao.applyResit(staffNumber,courseID);
+    }
+
+    @Override
+    public List<StaffTakeCourseRecord> queryStaffCourseGrades() {
+        return staffDao.queryStaffCourseGrades();
+    }
+
+    @Override
+    public Staff queryStaff(String staffNumber) {
+        return staffDao.queryStaff(staffNumber);
+    }
+
     private Enum getGender(String gender){
         if(gender.equals("male")){
             return Gender.MALE;
@@ -89,4 +116,6 @@ public class StaffManagerImpl implements IStaffManager {
             return Gender.FEMALE;
         }
     }
+
+
 }

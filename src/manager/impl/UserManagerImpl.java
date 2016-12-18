@@ -7,6 +7,7 @@ package manager.impl;
 import dao.impl.TeacherDaoImpl;
 import dao.impl.UserDaoImpl;
 import entity.Director;
+import entity.Staff;
 import entity.Teacher;
 import entity.User;
 import manager.IUserManager;
@@ -93,8 +94,11 @@ public class UserManagerImpl implements IUserManager {
                 case "主管":
                     DirectorManagerImpl directorManager = new DirectorManagerImpl();
                     Director director = directorManager.queryDirector(number);
+
+                    //检查培训计划是否已存在
+                    boolean hasTrainPlan = new TrainingPlanManagerImpl().hasTrainingPlan(director.getDepartmentName());
                     if (director != null) {
-                        new DirectorUI(director).setVisible(true);
+                        new DirectorUI(director,hasTrainPlan).setVisible(true);
                         return true;
                     } else {
                         return false;
@@ -112,6 +116,14 @@ public class UserManagerImpl implements IUserManager {
                     } else {
                         return false;
                     }
+                case "CEO":
+                    new CEOUI().setVisible(true);
+                    return true;
+                case "员工":
+                    StaffManagerImpl staffManager = new StaffManagerImpl();
+                    Staff staff = staffManager.queryStaff(number);
+                    new StaffUI(staff).setVisible(true);
+                    return true;
                 default:
                     return false;
                 }

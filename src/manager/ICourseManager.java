@@ -78,4 +78,6 @@ public interface ICourseManager {
      */
     public List<Course> queryCourses();
 
+    public boolean selectCourse(String courseID, String staffNumber);
+
 }

@@ -135,16 +135,40 @@ public class CourseDaoImpl implements ICourseDao {
             System.out.println("have no authority to update");
             return false;
         }
+
+        //检查是否可以更新
+        //1 第一次上传成绩可以
+        //2 补考完之后可以修改成绩
+        boolean firstTime = firstTime(staffNumber,courseID);
+        boolean afterResit = afterResit(staffNumber,courseID);
+        if (!firstTime&& !afterResit){
+            System.out.println("time error");
+            return false;
+        }
+
         Connection conn = util.getConnection();
-        String sql = "UPDATE Staff_take_Course set grade = ? where Course_ID = ? and Staff_number = ?";
+        String sql = "UPDATE Staff_take_Course set grade = ?,resit = ? where Course_ID = ? and Staff_number = ?";
         PreparedStatement pst = null;
         boolean res = false;
         try{
             pst = conn.prepareStatement(sql);
             pst.setString(1,grade);
-            pst.setString(2,courseID);
-            pst.setString(3,staffNumber);
+            if (grade.equals("pass")){
+                pst.setString(2,"noneed");
+            }else{
+                pst.setString(2,"need");
+            }
+            pst.setString(3,courseID);
+            pst.setString(4,staffNumber);
             pst.executeUpdate();
+
+            if (firstTime){
+                String sql2 = "Update Course set grade_upload_time = ? where ID = ?";
+                pst = conn.prepareStatement(sql2);
+                pst.setDate(1,new java.sql.Date(new java.util.Date().getTime()));
+                pst.setString(2,courseID);
+                pst.executeUpdate();
+            }
             res = true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -174,7 +198,8 @@ public class CourseDaoImpl implements ICourseDao {
 
         List<Staff>staffs = new ArrayList<>();
         Connection conn = util.getConnection();
-        String sql1 = "SELECT T1.Staff_number, T2.name from Staff_take_Course as T1 inner join Staff as T2 where T1.Course_ID = ? and T1.resit = 'need'";
+        String sql1 = "SELECT T1.Staff_number, T2.name from Staff_take_Course as T1 inner join Staff as T2" +
+                " where T1.Course_ID = ? and T1.resit = 'need'";
         PreparedStatement pst = null;
         ResultSet rs = null;
 
@@ -250,6 +275,26 @@ public class CourseDaoImpl implements ICourseDao {
         return res;
     }
 
+    @Override
+    public boolean selectCourse(String courseID, String staffNumber) {
+        Connection conn = util.getConnection();
+        String sql = "insert into Staff_take_Course(Course_ID, Staff_number) values(?,?)";
+        PreparedStatement pst = null;
+        boolean res = false;
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,courseID);
+            pst.setString(2,staffNumber);
+            pst.executeUpdate();
+            res = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+          util.close(null,pst,conn);
+        }
+        return res;
+    }
+
     private boolean validateAuthority(Teacher teacher, String courseID){
         Connection conn = util.getConnection();
         String sql = "select Teacher_number from Course where ID = ?";
@@ -288,6 +333,54 @@ public class CourseDaoImpl implements ICourseDao {
                 if (rs.getString("Course_ID").equals(courseID)){
                     res = true;
                     break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return res;
+    }
+
+    private boolean firstTime(String staffNumber, String courseID){
+        Connection conn = util.getConnection();
+        String sql = "select resit from Staff_take_Course where Staff_number = ? and Course_ID = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        boolean res = false;
+        try{
+            pst =conn.prepareStatement(sql);
+            pst.setString(1,staffNumber);
+            pst.setString(2,courseID);
+            rs = pst.executeQuery();
+            if (rs.next()){
+                if (null == rs.getString("resit")){
+                    res = true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return res;
+    }
+
+    public boolean afterResit(String staffNumber, String courseID){
+        Connection conn = util.getConnection();
+        String sql = "select resit from Staff_take_Course where Staff_number = ? and Course_ID = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        boolean res = false;
+        try{
+            pst =conn.prepareStatement(sql);
+            pst.setString(1,staffNumber);
+            pst.setString(2,courseID);
+            rs = pst.executeQuery();
+            if (rs.next()){
+                if ("accept".equals(rs.getString("resit"))){
+                    res = true;
                 }
             }
         } catch (SQLException e) {
