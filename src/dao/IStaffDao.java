@@ -3,6 +3,7 @@ package dao;
 import entity.Course;
 import entity.Director;
 import entity.Staff;
+import entity.StaffTakeCourseRecord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,4 +87,25 @@ public interface IStaffDao {
      * @return all staff and course and grade
      */
     public ArrayList<String[]> queryStaffsCourses();
+
+
+    /**
+     * @param staff
+     * @return
+     */
+    public List<StaffTakeCourseRecord> queryCourseRecords(Staff staff);
+
+
+    public StaffTakeCourseRecord queryCourseRecord(String courseID, String staffNumber);
+
+    /**
+     *
+     * @param staffNumber
+     * @param courseID
+     * @return
+     */
+    public boolean applyResit(String staffNumber, String courseID);
+
+    public List<StaffTakeCourseRecord> queryStaffCourseGrades();
+
 }

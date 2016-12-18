@@ -7,8 +7,10 @@ public class StaffTakeCourseRecord {
     private String courseID;
     private String courseName;
     private String staffNumber;
+    private String staffName;
+    private String staffDepart;
     private String grade;
-    private String status;
+    private String resit;
 
     public String getCourseID() {
         return courseID;
@@ -42,11 +44,27 @@ public class StaffTakeCourseRecord {
         this.grade = grade;
     }
 
-    public String getStatus() {
-        return status;
+    public String getResit() {
+        return resit;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setResit(String resit) {
+        this.resit = resit;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
+    public String getStaffDepart() {
+        return staffDepart;
+    }
+
+    public void setStaffDepart(String staffDepart) {
+        this.staffDepart = staffDepart;
     }
 }

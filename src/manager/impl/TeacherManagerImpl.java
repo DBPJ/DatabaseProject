@@ -1,10 +1,12 @@
 package manager.impl;
 
 import dao.impl.TeacherDaoImpl;
+import entity.StaffTakeCourseRecord;
 import entity.Teacher;
 import manager.ITeacherManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -34,4 +36,16 @@ public class TeacherManagerImpl implements ITeacherManager{
         teacher.setEmail(email);
         return teacherDao.addTeaher(teacher);
     }
+
+    @Override
+    public List<StaffTakeCourseRecord> queryCourseGrades(String teacherNumber) {
+        return teacherDao.queryCourseGrades(teacherNumber);
+    }
+
+    @Override
+    public boolean acceptResit(String staffNumber, String courseID) {
+        return teacherDao.acceptResit(staffNumber,courseID);
+    }
+
+
 }

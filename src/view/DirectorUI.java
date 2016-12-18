@@ -1,49 +1,28 @@
 package view;
 
 import entity.*;
-import manager.impl.CourseManagerImpl;
 import manager.impl.StaffManagerImpl;
-import manager.impl.TrainingPlanManager;
+import manager.impl.TrainingPlanManagerImpl;
 
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
-
-//import static view.DirectorUI.loginInfo;
 
 /**
  * Created by Jindiwei on 2016/12/15.
  */
 public class DirectorUI extends JFrame {
     Director director;
-    public DirectorUI() {
-        Director director = new Director();
-        director.setDepartmentName("人事");
-        this.director = director;
-        int width = 1100;
-        int height = 500;
-        setTitle("Director");
-        setSize(new Dimension(width, height));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        int w = (Toolkit.getDefaultToolkit().getScreenSize().width - width) / 2;
-        int h = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
-        setLocation(w, h);
-        setVisible(true);
-        DirectorPanel directorPanel = new DirectorPanel();
-        add(directorPanel);
-    }
 
-    public DirectorUI(Director director) {
+    public DirectorUI(Director director, boolean hasTrainPlan) {
         this.director = director;
         int width = 1100;
         int height = 500;
@@ -55,15 +34,13 @@ public class DirectorUI extends JFrame {
         int h = (Toolkit.getDefaultToolkit().getScreenSize().height - height) / 2;
         setLocation(w, h);
         String logininfo = "ID: " + director.getNumber() + " Name: " + director.getName() + " 部门: " + director.getDepartmentName();
-        DirectorPanel directorPanel = new DirectorPanel(logininfo);
+        DirectorPanel directorPanel = new DirectorPanel(logininfo, hasTrainPlan);
         add(directorPanel);
-
-
     }
 
 
     public static void main(String args[]) {
-        new DirectorUI().setVisible(true);
+//        new DirectorUI().setVisible(true);
     }
 
 
@@ -73,17 +50,9 @@ public class DirectorUI extends JFrame {
 
 
     class DirectorPanel extends JPanel {
-        DirectorPanel() {
-            LeftPanel leftPanel = new LeftPanel();
-            RightPanel rightPanel = new RightPanel();
-            setLayout(new GridLayout(1, 2));
-            add(leftPanel);
-            add(rightPanel);
-        }
-
-        DirectorPanel(String info) {
+        DirectorPanel(String info, boolean hasTrainPlan) {
             LeftPanel leftPanel = new LeftPanel(info);
-            RightPanel rightPanel = new RightPanel();
+            RightPanel rightPanel = new RightPanel(hasTrainPlan);
             setLayout(new GridLayout(1, 2));
             add(leftPanel);
             add(rightPanel);
@@ -96,38 +65,6 @@ public class DirectorUI extends JFrame {
      * this panel is on the left
      */
     class LeftPanel extends JPanel {
-        LeftPanel() {
-            JPanel loginInfo = new JPanel();
-            JLabel info = new JLabel("sdfsdf");
-            loginInfo.add(info);
-            AddStaffPanel addStaffPanel = new AddStaffPanel();
-            DeleteStaffPanel deleteStaffPanel = new DeleteStaffPanel();
-            QueryOrModifyPanel queryOrDeletePanel = new QueryOrModifyPanel();
-
-            setLayout(new GridBagLayout());
-            GridBagConstraints c = new GridBagConstraints();
-
-            c.fill = GridBagConstraints.EAST;
-            c.gridx = 0;
-            c.gridy = 0;
-
-            add(loginInfo);
-            c.fill = GridBagConstraints.EAST;
-            c.gridx = 0;
-            c.gridy = 1;
-            add(addStaffPanel, c);
-
-            c.fill = GridBagConstraints.EAST;
-            c.gridx = 0;
-            c.gridy = 2;
-//        deleteStaffPanel.setBounds(0, 400, 440, 80);
-            add(deleteStaffPanel, c);
-
-            c.fill = GridBagConstraints.EAST;
-            c.gridx = 0;
-            c.gridy = 3;
-            add(queryOrDeletePanel, c);
-        }
 
         LeftPanel(String logininfo) {
             JPanel loginInfo = new JPanel();
@@ -305,8 +242,6 @@ public class DirectorUI extends JFrame {
     class DeleteStaffPanel extends JPanel {
         JLabel numberLabel;
         JTextField numberField;
-        JLabel hiddenLabel;
-        JTextField hiddenField;
         JButton deleteButton;
         JButton cancelButton;
 
@@ -354,8 +289,6 @@ public class DirectorUI extends JFrame {
                     }
                 }
             });
-
-
         }
     }
 
@@ -582,8 +515,10 @@ public class DirectorUI extends JFrame {
         JLabel j3;
         ResultPanel resultPanel;
         JButton save;
+        boolean hasTrainPlan;
 
-        RightPanel() {
+        RightPanel(boolean hasplan) {
+            this.hasTrainPlan = hasplan;
 
             choose = new JLabel("Choose : ");
             String[] choices = {"Courses Staffs Choosed", "Courses Information"};
@@ -594,9 +529,8 @@ public class DirectorUI extends JFrame {
             j1 = new JLabel();
             j2 = new JLabel();
             j3 = new JLabel();
-            resultPanel = new ResultPanel();
+            resultPanel = new ResultPanel(hasplan);
             resultPanel.setBackground(Color.PINK);//为了看出效果，设置了颜色
-
 
             GridBagLayout layout = new GridBagLayout();
             this.setLayout(layout);
@@ -648,11 +582,10 @@ public class DirectorUI extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
                     int selectedIndex = choice.getSelectedIndex();
-                    if(selectedIndex == 1) {
-                        save.setVisible(true);
-                    }
-                    else{
+                    if (hasTrainPlan || selectedIndex == 0) {
                         save.setVisible(false);
+                    } else {
+                        save.setVisible(true);
                     }
                     resultPanel.change(selectedIndex);
                 }
@@ -663,20 +596,20 @@ public class DirectorUI extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
-                    ShowCoursesTableModel stm = (ShowCoursesTableModel)resultPanel.table.getModel();
-                    List<Course> lists = stm.getCourses_list();
-
-                    String type;
-                    /**
-                     * 将培训计划添加至后台,两种类型: Required  Electives
-                     */
-                    TrainingPlanManager trainingPlanManager = new TrainingPlanManager();
-                    for(int i = 0 ; i < lists.size() ; i ++){
-                        type = (String)stm.getValueAt(i, 3);
-                        if(!type.equals("Other")) { //只保存必修或者选修
-                            trainingPlanManager.addTrainingPlan(lists.get(i).getId(), director.getDepartmentName(), (String) stm.getValueAt(i, 3));
+                    ShowCoursesTableModel stm = (ShowCoursesTableModel) resultPanel.table.getModel();
+                    List<TrainPlan> lists = stm.getTrainPlans();
+                    TrainingPlanManagerImpl trainingPlanManager = new TrainingPlanManagerImpl();
+                    for (int i = 0; i < lists.size(); i++) {
+                        TrainPlan trainPlan = lists.get(i);
+                        if (!"other".equals(trainPlan.getType())) { //只保存必修或者选修
+                            trainPlan.setDepartmentName(director.getDepartmentName());
+                            trainingPlanManager.addTrainingPlan(trainPlan);
                         }
                     }
+                    hasTrainPlan = true;
+                    stm.setEditable(false);
+                    save.setVisible(false);
+                    resultPanel.setHasTrainPlan(true);
                 }
 
             });
@@ -691,177 +624,57 @@ public class DirectorUI extends JFrame {
 
         List<TableCellEditor> editors = new ArrayList<TableCellEditor>(1);
 
-        ResultPanel() {
+        TrainingPlanManagerImpl trainingPlanManager = new TrainingPlanManagerImpl();
+        boolean hasTrainPlan;
+
+        ResultPanel(boolean hasTrainPlan) {
+            this.hasTrainPlan = hasTrainPlan;
             table = new JTable();
             scrollPane = new JScrollPane(table);
             add(scrollPane);
+            ctm = new ShowCoursesTableModel(hasTrainPlan);
         }
 
         public void change(int index) {
             switch (index) {
                 case 0: {
                     StaffManagerImpl staffManager = new StaffManagerImpl();
-                    List<String[]> courses = staffManager.getCourseTakenInfo(director);
+                    ArrayList<String[]> courses = staffManager.getCourseTakenInfo(director);
                     sctm = new StaffCourseTableModel(courses);
                     table.setModel(sctm);
                     break;
                 }
                 case 1: {
-                    String [] list = {"Required", "Electives", "Other"};
-                    JComboBox<String> comboBox1 = new JComboBox<String>( list );
-                    DefaultCellEditor dce1 = new DefaultCellEditor( comboBox1 );
-                    editors.add( dce1 );
-                    CourseManagerImpl courseManager = new CourseManagerImpl();
-                    List<Course> courseList = courseManager.queryCourses();
-                    ctm = new ShowCoursesTableModel(courseList);
-
-                    TrainingPlanManager trainingPlanManager = new TrainingPlanManager();
-                    /**
-                     * trainPlan 建议type设成三个参数："Required", "Electives", "Other"
-                     */
-                    List<TrainPlan> trainPlans = trainingPlanManager.queryTrainPlans(director);
-                    String course_id;
-                    String course_name;
-                    String type;
-                    int row;
-                    for(int i = 0 ; i < trainPlans.size() ; i ++){
-                        course_id = trainPlans.get(i).getCourseID();
-                        row = getCourseRow(ctm, course_id);
-                        ctm.setValueAt(trainPlans.get(i).getType(), row, 3);
+                    String[] list = {"required", "elective", "other"};
+                    JComboBox<String> comboBox1 = new JComboBox<>(list);
+                    DefaultCellEditor dce1 = new DefaultCellEditor(comboBox1);
+                    editors.add(dce1);
+                    List<TrainPlan> trainPlans = new ArrayList<>();
+                    if (hasTrainPlan) {
+                        trainPlans = trainingPlanManager.queryTrainPlans(director);
+                    } else {
+                        trainPlans = trainingPlanManager.queryFreePlans();
                     }
+                    ctm.setTrainPlans(trainPlans);
                     table.setModel(ctm);
-
-                    table.getColumn("培训计划").setCellEditor(new MyComboBoxEditor(list));
+                    table.getColumn("Type").setCellEditor(new MyComboBoxEditor(list));
                     break;
                 }
             }
         }
 
-    private class JTableComboBoxRenderer implements TableCellRenderer {
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JComboBox combobox = (JComboBox) value;
-            if (hasFocus){
-                System.out.println("have focus");
-            }
 
-            if (isSelected){
-                System.out.println("is selected");
-            }
-            combobox.setEditable(true);
-            return combobox;
-        }
-    }
-
-    private class JTableComBoxEditor implements TableCellEditor {
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            return null;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return null;
-        }
-
-        @Override
-        public boolean isCellEditable(EventObject anEvent) {
-            return false;
-        }
-
-        @Override
-        public boolean shouldSelectCell(EventObject anEvent) {
-            return false;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            return false;
-        }
-
-        @Override
-        public void cancelCellEditing() {
-
-        }
-
-        @Override
-        public void addCellEditorListener(CellEditorListener l) {
-
-        }
-
-        @Override
-        public void removeCellEditorListener(CellEditorListener l) {
-
-        }
-    }
-
-    class ShowCoursesTableModel implements TableModel {
-        private List<Course> courses_list;
-        String[] columns = new String[]{"Number","Name","Class Hour","Type"};
-
-        public ShowCoursesTableModel(List<Course> list) {
-            this.courses_list = list;
-        }
-
-        public int getRowCount() {
-            return courses_list.size();
-        }
-
-        public int getColumnCount() {
-            return columns.length;
-        }
-
-        public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            Course course = courses_list.get(rowIndex);
-            if (columnIndex == 0) {
-                return "" + course.getId();
-            } else if (columnIndex == 1) {
-                return course.getName();
-            } else if (columnIndex == 2) {
-                return "" + course.getClassHour();
-            } else if (columnIndex == 3) {
-                String [] list = {"equired", "Electives", "Other"};
-                JComboBox types = new JComboBox(list);
-                return types;
-            }
-            else {
-                return "出错!";
-            }
-        }
-
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        }
-
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            if(columnIndex == 4){
-                return true;
-            }
-            return false;
-        }
-
-        public String getColumnName(int columnIndex) {
-            return columns[columnIndex];
-        }
-
-        public void addTableModelListener(TableModelListener l) {
-        }
-
-        public void removeTableModelListener(TableModelListener l) {
-        }
-    }
-
-        public int getCourseRow(ShowCoursesTableModel ctm, String course_id){
-            for(int i = 0 ; i < ctm.getRowCount() ; i ++){
-                if(ctm.getValueAt(i, 0).equals(course_id)){
+        public int getCourseRow(ShowCoursesTableModel ctm, String course_id) {
+            for (int i = 0; i < ctm.getRowCount(); i++) {
+                if (ctm.getValueAt(i, 0).equals(course_id)) {
                     return i;
                 }
             }
             return 0;
+        }
+
+        public void setHasTrainPlan(boolean hasTrainPlan) {
+            this.hasTrainPlan = hasTrainPlan;
         }
     }
 
@@ -871,85 +684,97 @@ public class DirectorUI extends JFrame {
         }
     }
 
+    class ShowCoursesTableModel extends AbstractTableModel {
+        private List<TrainPlan> trainPlans;
+        String[] columns = new String[]{"ID", "Name", "Class Hour", "Type"};
+        boolean editable;
 
-    class ShowCoursesTableModel implements TableModel {
-        private List<Course> courses_list;
-        String[] type ;
-
-        public ShowCoursesTableModel(List<Course> list) {
-            this.courses_list = list;
-            type = new String[]{"Other", "Required", "Electives"};
+        public ShowCoursesTableModel(boolean hasTrainPlan) {
+            trainPlans = new ArrayList<>();
+            this.editable = !hasTrainPlan;
         }
 
+
+        @Override
+        public String getColumnName(int columnIndex) {
+            return columns[columnIndex];
+        }
+
+        @Override
         public int getRowCount() {
-            return courses_list.size();
+            return trainPlans.size();
         }
 
+        @Override
         public int getColumnCount() {
-            return 4;
+            return columns.length;
         }
 
-        public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            Course course = courses_list.get(rowIndex);
-            if (columnIndex == 0) {
-                return "" + course.getId();
-            } else if (columnIndex == 1) {
-                return course.getName();
-            } else if (columnIndex == 2) {
-                return "" + course.getClassHour();
-            } else if (columnIndex == 3) {
-                return type[0];
-            }
-            else {
-                return "出错!";
+            TrainPlan trainPlan = trainPlans.get(rowIndex);
+            switch (columnIndex) {
+                case 0:
+                    return trainPlan.getCourseID();
+                case 1:
+                    return trainPlan.getCourseName();
+                case 2:
+                    return trainPlan.getClassHour();
+                case 3:
+                    return trainPlan.getType();
+                default:
+                    return null;
             }
         }
 
+        @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            String comboBox = (String)aValue;
-            type[rowIndex] = comboBox;
+            TrainPlan trainPlan = trainPlans.get(rowIndex);
+            switch (columnIndex) {
+                case 0:
+                    trainPlan.setCourseID((String) aValue);
+                    break;
+                case 1:
+                    trainPlan.setCourseName((String) aValue);
+                    break;
+                case 2:
+                    trainPlan.setClassHour((Integer) aValue);
+                    break;
+                case 3:
+                    trainPlan.setType((String) aValue);
+                    break;
+            }
         }
 
+        public List<TrainPlan> getTrainPlans() {
+            return trainPlans;
+        }
+
+        public void setTrainPlans(List<TrainPlan> trainPlans) {
+            this.trainPlans = trainPlans;
+        }
+
+        @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            if(columnIndex == 3){
+            if (editable && columnIndex == 3) {
                 return true;
             }
             return false;
         }
 
-        public String getColumnName(int columnIndex) {
-            if (columnIndex == 0) {
-                return "课程编号";
-            } else if (columnIndex == 1) {
-                return "课程名称";
-            } else if (columnIndex == 2) {
-                return "课程学时";
-            } else if (columnIndex == 3) {
-                return "培训计划";
-            } else {
-                return "出错!";
-            }
+        public TrainPlan getTrainPlan(int index){
+            return trainPlans.get(index);
         }
 
-        public void addTableModelListener(TableModelListener l) {
-        }
-
-        public void removeTableModelListener(TableModelListener l) {
-        }
-
-        public List<Course> getCourses_list(){
-            return courses_list;
+        public void setEditable(boolean editable) {
+            this.editable = editable;
         }
     }
 
     class StaffCourseTableModel implements TableModel {
         private List<String[]> course_list;
 
-        public StaffCourseTableModel(List<String[]> list) {
+        public StaffCourseTableModel(ArrayList<String[]> list) {
             this.course_list = list;
         }
 
@@ -1018,76 +843,11 @@ public class DirectorUI extends JFrame {
         public void removeTableModelListener(TableModelListener l) {
         }
 
-        public List<String[]> getCourses_list(){
+        public List<String[]> getCourses_list() {
             return course_list;
         }
     }
 
-    class TeacherTableModel implements TableModel {
-        private List<Teacher> teachers_list;
-
-        public TeacherTableModel(List<Teacher> list) {
-            this.teachers_list = list;
-        }
-
-        public int getRowCount() {
-            return teachers_list.size();
-        }
-
-        public int getColumnCount() {
-            return 5;
-        }
-
-        public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            Teacher user = teachers_list.get(rowIndex);
-            if (columnIndex == 0) {
-                return "" + user.getNumber();
-            } else if (columnIndex == 1) {
-                return user.getName();
-            } else if (columnIndex == 2) {
-                return "" + user.getGender();
-            } else if (columnIndex == 3) {
-                return "" + user.getPhoneNumber();
-            } else if (columnIndex == 4) {
-                return "" + user.getEmail();
-            } else {
-                return "出错!";
-            }
-        }
-
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        }
-
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
-        }
-
-        public String getColumnName(int columnIndex) {
-            if (columnIndex == 0) {
-                return "工 号";
-            } else if (columnIndex == 1) {
-                return "姓 名";
-            } else if (columnIndex == 2) {
-                return "性 别";
-            } else if (columnIndex == 3) {
-                return "联系电话";
-            } else if (columnIndex == 4) {
-                return "邮箱";
-            } else {
-                return "出错!";
-            }
-        }
-
-        public void addTableModelListener(TableModelListener l) {
-        }
-
-        public void removeTableModelListener(TableModelListener l) {
-        }
-    }
 }
 
 

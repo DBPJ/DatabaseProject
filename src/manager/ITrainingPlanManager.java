@@ -1,6 +1,7 @@
 package manager;
 
 import entity.Director;
+import entity.Staff;
 import entity.TrainPlan;
 import java.util.List;
 
@@ -17,8 +18,15 @@ public interface ITrainingPlanManager {
     public boolean addTrainingPlan(String courseID, String departmentName, String type);
 
 
+    public boolean addTrainingPlan(TrainPlan trainPlan);
     /**
      * @return all train plan
      */
     public List<TrainPlan> queryTrainPlans(Director director);
+
+    public List<TrainPlan> queryTrainPlans(Staff staff);
+
+    public boolean hasTrainingPlan(String depart);
+
+    public List<TrainPlan> queryFreePlans();
 }

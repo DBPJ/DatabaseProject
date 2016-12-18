@@ -103,4 +103,5 @@ public interface ICourseDao {
 
     public boolean updateResit(String courseID, String staffNumber, String resit);
 
+    public boolean selectCourse(String courseID, String staffNumber);
 }
