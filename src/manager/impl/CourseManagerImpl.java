@@ -95,5 +95,10 @@ public class CourseManagerImpl implements ICourseManager {
         return courseDao.queryCourses();
     }
 
+    @Override
+    public boolean selectCourse(String courseID, String staffNumber) {
+        return courseDao.selectCourse(courseID,staffNumber);
+    }
+
 
 }

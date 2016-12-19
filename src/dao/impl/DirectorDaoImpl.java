@@ -78,7 +78,8 @@ public class DirectorDaoImpl implements IDirectorDao {
         }
         try {
             ResultSet rs = stmt.executeQuery(sql);
-            if(rs.next()) {
+            while(rs.next()) {
+                System.out.println();
                 Director director = new Director();
                 director.setNumber(rs.getString("number"));
                 director.setName(rs.getString("name"));
@@ -96,6 +97,7 @@ public class DirectorDaoImpl implements IDirectorDao {
             util.close(null,stmt,conn);
         }
         if(directors.size() > 0){
+            System.out.println("size: " + directors.size());
          return directors;
         }
         else {

@@ -1,8 +1,10 @@
 package manager;
 
+import entity.StaffTakeCourseRecord;
 import entity.Teacher;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -32,4 +34,8 @@ public interface ITeacherManager {
      * @return result
      */
     public boolean addTeacher(String number, String name, String gender, String phone, String email);
+
+    public List<StaffTakeCourseRecord> queryCourseGrades(String teacherNumber);
+
+    public boolean acceptResit(String staffNumber, String courseID);
 }

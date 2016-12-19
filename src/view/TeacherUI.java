@@ -1,12 +1,14 @@
 package view;
 
+import entity.Staff;
 import entity.StaffTakeCourseRecord;
 import entity.Teacher;
 
 import manager.impl.CourseManagerImpl;
+import manager.impl.StaffManagerImpl;
+import manager.impl.TeacherManagerImpl;
 
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -39,7 +41,7 @@ public class TeacherUI extends JFrame {
 
     public static void main(String[] args) {
         Teacher teacher = new Teacher();
-        teacher.setNumber("TR01001");
+        teacher.setNumber("TR01002");
         teacher.setName("李敏");
         teacher.setGender("male");
         teacher.setPhoneNumber((long) 12345);
@@ -59,6 +61,14 @@ public class TeacherUI extends JFrame {
         JTable jTable;
         CourseStaffModel model;
 
+        JLabel courseLabel;
+        JTextField courseField ;
+        JLabel staffLabel ;
+        JTextField staffField;
+        JButton submit ;
+
+        StaffManagerImpl staffManager = new StaffManagerImpl();
+        TeacherManagerImpl teacherManager = new TeacherManagerImpl();
         public TeacherPanel() {
             setLayout(new GridLayout(1, 2));
             leftPanel = new JPanel();
@@ -72,15 +82,16 @@ public class TeacherUI extends JFrame {
             rightPanel = new JPanel();
             GridBagLayout layout = new GridBagLayout();
             rightPanel.setLayout(layout);
-            JLabel courseLabel = new JLabel("Course ID:");
-            JTextField courseField = new JTextField();
-            JLabel staffLabel = new JLabel("Staff");
-            JTextField staffField = new JTextField();
-            JButton submit = new JButton("Submit");
+             courseLabel = new JLabel("Course ID:");
+            courseField = new JTextField();
+            staffLabel = new JLabel("Staff");
+            staffField = new JTextField();
+            submit = new JButton("Submit");
 
             model = new CourseStaffModel();
             jTable = new JTable(model);
             TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+
             jTable.getColumn("Operation").setCellRenderer(buttonRenderer);
             JScrollPane scrollPane = new JScrollPane(jTable);
             rightPanel.add(courseLabel);
@@ -124,22 +135,43 @@ public class TeacherUI extends JFrame {
 
             add(rightPanel);
 
+            submit.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    String courseID = courseField.getText();
+                    String staffNumber = staffField.getText();
+                    if (!courseID.equals("") && !staffNumber.equals("")) {
+                        StaffTakeCourseRecord record = staffManager.queryCourseRecord(courseID, staffNumber);
+                        List<StaffTakeCourseRecord> records = new ArrayList<StaffTakeCourseRecord>();
+                        records.add(record);
+                        model.setRecords(records);
+                        model.fireTableDataChanged();
+                    }else {
+                        List<StaffTakeCourseRecord> records = teacherManager.queryCourseGrades(teacher.getNumber());
+                        model.setRecords(records);
+                        model.fireTableDataChanged();
+                    }
+
+                }
+            });
+
         }
 
-        private void addRecord(){
-            for (int i =0;i<20;i++) {
+        private void addRecord() {
+            for (int i = 0; i < 20; i++) {
                 StaffTakeCourseRecord stcr = new StaffTakeCourseRecord();
-                stcr.setCourseID("id_"+i);
-                stcr.setStaffNumber("staff_"+i);
-                if (i%5==0){
+                stcr.setCourseID("id_" + i);
+                stcr.setStaffNumber("staff_" + i);
+                if (i % 5 == 0) {
                     stcr.setGrade("pass");
-                }else{
+                } else {
                     stcr.setGrade("fail");
                 }
-                if(i%2==0){
-                    stcr.setStatus("applying");
-                }else{
-                    stcr.setStatus("test");
+                if (i % 2 == 0) {
+                    stcr.setResit("applying");
+                } else {
+                    stcr.setResit("test");
                 }
                 model.addRecord(stcr);
             }
@@ -147,11 +179,22 @@ public class TeacherUI extends JFrame {
 
 
         private class JTableButtonRenderer implements TableCellRenderer {
-            @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                JButton button = (JButton)value;
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JButton button = (JButton) value;
+                if (hasFocus){
+                    if (button.getText().equals("Accept")){
+                        StaffTakeCourseRecord record = model.getRecord(row);
+                        teacherManager.acceptResit(record.getStaffNumber(),record.getCourseID());
+                        List<StaffTakeCourseRecord> records = teacherManager.queryCourseGrades(teacher.getNumber());
+                        model.setRecords(records);
+                        model.fireTableDataChanged();
+                    }
+                }
                 return button;
             }
         }
+
         class AddCoursePanel extends JPanel {
             JLabel courseIDLabel;
             JTextField courseField;
@@ -191,7 +234,7 @@ public class TeacherUI extends JFrame {
                         String course = courseField.getText();
                         String name = nameField.getText();
                         String classHour = classHourField.getText();
-                        courseManager.addCourse(course,name,Integer.parseInt(classHour),teacher.getNumber());
+                        courseManager.addCourse(course, name, Integer.parseInt(classHour), teacher.getNumber());
                     }
                 });
             }
@@ -243,16 +286,16 @@ public class TeacherUI extends JFrame {
                         String course = courseField.getText();
                         String staff = staffField.getText();
                         String grade = null;
-                        if (pass.isSelected()){
+                        if (pass.isSelected()) {
                             grade = "pass";
-                        }else if (fail.isSelected()){
+                        } else if (fail.isSelected()) {
                             grade = "fail";
-                        }else{
+                        } else {
                             //todo reminder
                             System.out.println("grade is not select");
                         }
 
-                        courseManager.updateGrade(teacher.getNumber(),course,staff,grade);
+                        courseManager.updateGrade(teacher.getNumber(), course, staff, grade);
                     }
                 });
             }
@@ -292,7 +335,7 @@ public class TeacherUI extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         String filename = filenameField.getText();
-                        courseManager.addCourses(teacher,filename);
+                        courseManager.addCourses(teacher, filename);
                     }
                 });
             }
@@ -305,6 +348,7 @@ public class TeacherUI extends JFrame {
             JButton submit;
 
             CourseManagerImpl courseManager = new CourseManagerImpl();
+
             DeleteCoursePanel() {
                 setLayout(new GridLayout(1, 4));
                 courseLabel = new JLabel("Number:");
@@ -331,9 +375,9 @@ public class TeacherUI extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         String number = courseField.getText();
-                        if (number.equals("")){
+                        if (number.equals("")) {
                             //todo 提醒为空
-                        }else{
+                        } else {
                             courseManager.deleteCourse(number);
                         }
                     }
@@ -361,8 +405,7 @@ public class TeacherUI extends JFrame {
 
             //设置每一列的名字
             @Override
-            public String getColumnName(int column)
-            {
+            public String getColumnName(int column) {
                 return columns[column];
             }
 
@@ -391,19 +434,14 @@ public class TeacherUI extends JFrame {
                         value = records.get(rowIndex).getGrade();
                         break;
                     case 3:
-                        value = records.get(rowIndex).getStatus();
+                        value = records.get(rowIndex).getResit();
                         break;
                     case 4:
                         JButton button = new JButton();
-                        if (records.get(rowIndex).getStatus().equals("applying")){
+                        if (records.get(rowIndex).getResit().equals("applying")) {
                             button.setText("Accept");
-                            button.addMouseListener(new MouseAdapter() {
-                                @Override
-                                public void mouseClicked(MouseEvent e) {
-                                    super.mouseClicked(e);
-                                    //todo: add listener to accept staff application
-                                }
-                            });
+                        }else if (records.get(rowIndex).getResit().equals("accept")){
+                            button.setText("Accepted");
                         }
                         value = button;
                 }
@@ -418,8 +456,15 @@ public class TeacherUI extends JFrame {
                 this.records = records;
             }
 
-            public void addRecord(StaffTakeCourseRecord record){
+            public void addRecord(StaffTakeCourseRecord record) {
                 this.records.add(record);
+            }
+
+            public StaffTakeCourseRecord getRecord(int index){
+                if (index>=records.size()){
+                    return null;
+                }
+                return records.get(index);
             }
         }
     }

@@ -72,5 +72,12 @@ public interface ICourseManager {
      */
     public boolean deleteCourse(String courseID);
 
+    /**
+     *
+     * @return 全部课程
+     */
     public List<Course> queryCourses();
+
+    public boolean selectCourse(String courseID, String staffNumber);
+
 }

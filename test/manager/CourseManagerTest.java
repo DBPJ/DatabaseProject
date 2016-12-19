@@ -18,7 +18,7 @@ public class CourseManagerTest {
     @Test
     public void testAddCourses(){
         Teacher teacher = new Teacher();
-        teacher.setNumber("TR01001");
+        teacher.setNumber("TR01005");
         teacher.setName("李敏");
         teacher.setGender("male");
         teacher.setPhoneNumber((long) 12345);

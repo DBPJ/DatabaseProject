@@ -1,15 +1,12 @@
 package dao.impl;
 
 import dao.IStaffDao;
-import entity.Course;
-import entity.Director;
-import entity.Gender;
-import entity.Staff;
+import entity.*;
 import util.JDBCUtil;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -52,6 +49,7 @@ public class StaffDaoImpl implements IStaffDao {
     public boolean deleteStaff(Director director,String number) {
         Connection conn = util.getConnection();
         String department_name = director.getDepartmentName();
+        System.out.println("!!" + director.getDepartmentName() + " " + director.getNumber());
         String sql = "SELECT Department_name FROM mydb.Staff where number = \""+ number +"\";";
         Statement stmt = null;
         boolean res = false;
@@ -61,10 +59,11 @@ public class StaffDaoImpl implements IStaffDao {
             e.printStackTrace();
         }
         try {
-            System.out.println(sql);
             ResultSet rs = stmt.executeQuery(sql);
             if(rs.next()){
+                System.out.println("1");
                 String name = rs.getString(1);
+                System.out.println(name + " " + department_name);
                 if(name.equals(department_name)){
                     System.out.println("RRRR");
                     sql = "DELETE FROM mydb.Staff where number = \"" + number + "\";";
@@ -76,6 +75,7 @@ public class StaffDaoImpl implements IStaffDao {
                     }
                 }
                 else{
+                    System.out.println("2");
                     return false;
                 }
             }
@@ -304,6 +304,7 @@ public class StaffDaoImpl implements IStaffDao {
                 staff.setName(staff_name);
                 staff.setDepartmentName(rs.getString("Department_name"));
                 staff_department = rs.getString("Department_name");
+
                 staffs.add(staff);
             }
         } catch (SQLException e) {
@@ -483,6 +484,160 @@ public class StaffDaoImpl implements IStaffDao {
             }
         }
         return infos_rt;
+    }
+
+    @Override
+    public List<StaffTakeCourseRecord> queryCourseRecords(Staff staff) {
+        Connection conn = util.getConnection();
+        String sql = "select * from Course as T1 inner join Staff_take_Course as T2" +
+                " where T1.ID = T2.Course_ID and Staff_number = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        List<StaffTakeCourseRecord> records = new ArrayList<>();
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,staff.getNumber());
+            rs = pst.executeQuery();
+            while (rs.next()){
+                StaffTakeCourseRecord record = new StaffTakeCourseRecord();
+                record.setCourseID(rs.getString("Course_ID"));
+                record.setCourseName(rs.getString("name"));
+                record.setGrade(rs.getString("grade"));
+                record.setResit(rs.getString("resit"));
+                record.setStaffNumber(rs.getString("Staff_number"));
+                records.add(record);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return records;
+    }
+
+    @Override
+    public StaffTakeCourseRecord queryCourseRecord(String courseID, String staffNumber) {
+        Connection conn = util.getConnection();
+        String sql = "select * from Course as T1 inner join Staff_take_Course as T2" +
+                " where T1.ID = T2.Course_ID and Staff_number = ? and T2.Course_ID = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+//        List<StaffTakeCourseRecord> records = new ArrayList<>();
+        StaffTakeCourseRecord record = new StaffTakeCourseRecord();
+
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,staffNumber);
+            pst.setString(2,courseID);
+            rs = pst.executeQuery();
+            if (rs.next()){
+                record.setCourseID(rs.getString("Course_ID"));
+                record.setCourseName(rs.getString("name"));
+                record.setGrade(rs.getString("grade"));
+                record.setResit(rs.getString("resit"));
+                record.setStaffNumber(rs.getString("Staff_number"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return record;
+    }
+
+    @Override
+    public boolean applyResit(String staffNumber, String courseID) {
+        boolean setfee = setFee(staffNumber,courseID);
+        if (!setfee){
+            return false;
+        }
+        Connection conn = util.getConnection();
+        String sql = "update Staff_take_Course set resit = 'applying'" +
+                " where Staff_number = ? and Course_ID  = ?";
+        PreparedStatement pst =null;
+        boolean res = false;
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,staffNumber);
+            pst.setString(2,courseID);
+            pst.executeUpdate();
+            res = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(null,pst,conn);
+        }
+        return res;
+    }
+
+    @Override
+    public List<StaffTakeCourseRecord> queryStaffCourseGrades() {
+        Connection conn = util.getConnection();
+        String sql = "select * from Course as T1 inner join Staff_take_Course as T2 inner join Staff as T3" +
+                " where T1.ID = T2.Course_ID and T2.Staff_number = T3.number";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        List<StaffTakeCourseRecord> records = new ArrayList<>();
+        try{
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            while (rs.next()){
+                StaffTakeCourseRecord record = new StaffTakeCourseRecord();
+                record.setCourseID(rs.getString("ID"));
+                record.setCourseName(rs.getString(1));
+                record.setStaffNumber(rs.getString("Staff_number"));
+                record.setCourseName(rs.getString(11));
+                record.setGrade(rs.getString("grade"));
+                record.setStaffDepart(rs.getString("Department_name"));
+                records.add(record);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+
+        return records;
+    }
+
+
+    private boolean setFee(String staffNumber, String courseID){
+        Connection conn = util.getConnection();
+        String sql = "select grade_upload_time from Course where ID = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        boolean res = false;
+        boolean timeout = false;
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,courseID);
+            rs = pst.executeQuery();
+            if (rs.next()){
+                Date date = rs.getDate("grade_upload_time");
+                java.util.Date date1 = new java.util.Date(date.getTime());
+                java.util.Date date2 = new java.util.Date(new java.util.Date().getTime());
+                long betweenDays = (date2.getTime() - date1.getTime())/(1000*60*60*24);
+                String sql2 = "update Staff_take_Course set fee = ? where Course_ID = ? and Staff_number  = ?";
+                pst = conn.prepareStatement(sql2);
+                if (betweenDays<=7){
+                    pst.setDouble(1,50);
+                }else if (betweenDays<14){
+                    pst.setDouble(1,100);
+                }else{
+                    pst.setDouble(1,-1);
+                    timeout = true;
+                }
+                pst.setString(2,courseID);
+                pst.setString(3,staffNumber);
+                pst.executeUpdate();
+            }
+            res =true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return res&&(!timeout);
     }
 
     private Enum getGender(String gender){

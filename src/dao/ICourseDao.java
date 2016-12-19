@@ -102,4 +102,6 @@ public interface ICourseDao {
     public boolean deleteCourse(String courseID);
 
     public boolean updateResit(String courseID, String staffNumber, String resit);
+
+    public boolean selectCourse(String courseID, String staffNumber);
 }

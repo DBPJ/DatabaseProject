@@ -1,6 +1,7 @@
 package dao;
 
 import entity.Director;
+import entity.Staff;
 import entity.TrainPlan;
 
 import java.util.List;
@@ -10,15 +11,24 @@ import java.util.List;
  */
 public interface ITrainPlanDao {
     /**
-     * @param director director
      * @param trainPlan train plan
      * @return add result
      */
-    public boolean addTrainPlan(Director director,TrainPlan trainPlan);
+    public boolean addTrainPlan(TrainPlan trainPlan);
 
     /**
      * @param director director
      * @return all train plan
      */
     public List<TrainPlan> queryTrainPlans(Director director);
+
+
+    /**
+     *
+     * @param staff staff
+     * @return train plans
+     */
+    public List<TrainPlan> queryTrainPlans(Staff staff);
+
+    public boolean hasTrainingPlan(String department);
 }
