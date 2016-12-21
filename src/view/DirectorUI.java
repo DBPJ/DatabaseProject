@@ -209,7 +209,6 @@ public class DirectorUI extends JFrame {
                     String salary = salartField.getText();
                     String additionrate = additionrateField.getText();
                     boolean isEmpty = false;
-                    //todo: 点击submit时检查Type？
                     if (number.length() == 0) {
                         isEmpty = true;
                     }
@@ -471,7 +470,7 @@ public class DirectorUI extends JFrame {
                             JOptionPane.showInternalMessageDialog(QueryOrModifyPanel.this, "Sorry, Something is wrong !!!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } else {
-                        JOptionPane.showMessageDialog(QueryOrModifyPanel.this, "The Staff's information is incomple !!!", "Alert", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(QueryOrModifyPanel.this, "The Staff's information is incomplete !!!", "Alert", JOptionPane.WARNING_MESSAGE);
                     }
                 }
             });

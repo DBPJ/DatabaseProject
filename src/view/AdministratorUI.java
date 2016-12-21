@@ -155,8 +155,11 @@ public class AdministratorUI extends JFrame {
                     String number = numberField.getText();
                     String password = passwordField.getText();
                     String type = typeField.getText();
-                    //todo: 点击submit时检查Type？
-                    userManager.addUser(number, password, type);
+                    try {
+                        userManager.addUser(number, password, type);
+                    }catch (Exception e1){
+                        System.out.println("Can not add User!!!");
+                    }
                 }
             });
         }
@@ -297,8 +300,11 @@ public class AdministratorUI extends JFrame {
                     String number = numberField.getText();
                     String password = passwordField.getText();
                     String type = typeField.getText();
-                    //todo: 点击submit时检查Type？
-                    userManager.updateUserInfo(number, password, type);
+                    try {
+                        userManager.updateUserInfo(number, password, type);
+                    }catch (Exception e1){
+                        System.out.println("Can not update the user infomation!!!");
+                    }
                 }
             });
         }
@@ -428,8 +434,7 @@ public class AdministratorUI extends JFrame {
                     } else if (femaleButton.isSelected()) {
                         gender = "female";
                     } else {
-                        //todo reminder
-                        System.out.println("gender can be null");
+                        JOptionPane.showMessageDialog(administratorPanel, "The gender can not be null!!!", "Alert", JOptionPane.WARNING_MESSAGE);
                     }
 
                     String number = numberField.getText();
@@ -437,8 +442,7 @@ public class AdministratorUI extends JFrame {
                     String phone = phoneField.getText();
                     String email = mailField.getText();
                     if (number.equals("") || name.equals("") || phone.equals("") || email.equals("")) {
-                        //todo reminder
-                        System.out.println("info can not be null");
+                        JOptionPane.showMessageDialog(administratorPanel, "The information you input is incomplete!!!", "Alert", JOptionPane.WARNING_MESSAGE);
                     } else {
                         teacherManager.addTeacher(number, name, gender, phone, email);
                     }

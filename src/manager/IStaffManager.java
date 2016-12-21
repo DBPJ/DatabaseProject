@@ -1,9 +1,6 @@
 package manager;
 
-import entity.Course;
-import entity.Director;
-import entity.Staff;
-import entity.StaffTakeCourseRecord;
+import entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +87,13 @@ public interface IStaffManager {
 
     public StaffTakeCourseRecord queryCourseRecord(String courseID, String staffNumber);
 
+
+    /**
+     *
+     * @param courseID
+     * @return
+     */
+    public List<StaffTakeCourseRecord> queryCourseSelection(String courseID, Teacher teacher);
     /**
      *
      * @param staffNumber
