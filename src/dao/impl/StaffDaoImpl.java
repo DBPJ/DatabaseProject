@@ -6,7 +6,9 @@ import util.JDBCUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -628,6 +630,46 @@ public class StaffDaoImpl implements IStaffDao {
         }
 
         return records;
+    }
+
+    @Override
+    public void addAdditionalRate() {
+        Connection conn = util.getConnection();
+        String sql = "select Staff_number, grade from Staff_take_Course";
+        String sql2 = "update Staff set additionrate = additionrate+0.1 where number = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+
+        Map<String,Boolean> gradeMap = new HashMap<>();
+        try{
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            while (rs.next()){
+                String staffNumber = rs.getString("Staff_number");
+                String grade = rs.getString("grade");
+                if (gradeMap.containsKey(staffNumber)){
+                    if (!"pass".equals(grade)){
+                        gradeMap.put(staffNumber,false);
+                    }
+                }else{
+                    gradeMap.put(staffNumber,true);
+                }
+            }
+
+
+            pst = conn.prepareStatement(sql2);
+            for (String key:gradeMap.keySet()){
+                if (gradeMap.get(key)){
+                    pst.setString(1,key);
+                    pst.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+
     }
 
 

@@ -1,6 +1,7 @@
 package view;
 
 import entity.User;
+import manager.impl.StaffManagerImpl;
 import manager.impl.TeacherManagerImpl;
 import manager.impl.UserManagerImpl;
 
@@ -53,6 +54,8 @@ public class AdministratorUI extends JFrame {
 
         JPanel addTeacherPanel;
 
+        JPanel addRatePanel;
+
 
         AdministratorPanel() {
             setLayout(new GridBagLayout());
@@ -94,6 +97,13 @@ public class AdministratorUI extends JFrame {
             c.gridx = 0;
             c.gridy = 5;
             add(addTeacherPanel, c);
+
+            addRatePanel = new AddRate();
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 0;
+            c.gridy = 6;
+            add(addRatePanel, c);
+
 
         }
 
@@ -451,5 +461,22 @@ public class AdministratorUI extends JFrame {
             });
         }
 
+    }
+
+    class AddRate extends JPanel{
+        Button addRate;
+        StaffManagerImpl staffManager;
+        AddRate(){
+            staffManager = new StaffManagerImpl();
+            addRate = new Button("Add Additionrate");
+            add(addRate);
+            addRate.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    staffManager.addRate();
+                }
+            });
+        }
     }
 }

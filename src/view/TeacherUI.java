@@ -520,9 +520,9 @@ public class TeacherUI extends JFrame {
                         break;
                     case 4:
                         JButton button = new JButton();
-                        if (records.get(rowIndex).getResit().equals("applying")) {
+                        if ("applying".equals(records.get(rowIndex).getResit())) {
                             button.setText("Accept");
-                        }else if (records.get(rowIndex).getResit().equals("accept")){
+                        }else if ("accept".equals(records.get(rowIndex).getResit())){
                             button.setText("Accepted");
                         }
                         value = button;

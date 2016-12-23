@@ -111,6 +111,11 @@ public class StaffManagerImpl implements IStaffManager {
         return staffDao.queryStaff(staffNumber);
     }
 
+    @Override
+    public void addRate() {
+        staffDao.addAdditionalRate();
+    }
+
     private Enum getGender(String gender){
         if(gender.equals("male")){
             return Gender.MALE;
