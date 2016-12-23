@@ -1,19 +1,18 @@
 package view;
 
-import entity.Staff;
 import entity.StaffTakeCourseRecord;
 import entity.Teacher;
-
 import manager.impl.CourseManagerImpl;
 import manager.impl.StaffManagerImpl;
 import manager.impl.TeacherManagerImpl;
 
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,7 +40,7 @@ public class TeacherUI extends JFrame {
 
     public static void main(String[] args) {
         Teacher teacher = new Teacher();
-        teacher.setNumber("TR01002");
+        teacher.setNumber("TR01001");
         teacher.setName("李敏");
         teacher.setGender("male");
         teacher.setPhoneNumber((long) 12345);
@@ -58,19 +57,29 @@ public class TeacherUI extends JFrame {
     class TeacherPanel extends JPanel {
         JPanel leftPanel;
         JPanel rightPanel;
-        JTable jTable;
+
+        JTable jTable_1;
+        JTable jTable_2;
         CourseStaffModel model;
+        CourseStaffChooseModel model_2;
 
         JLabel courseLabel;
+        JLabel courseLabel_2;
         JTextField courseField ;
         JLabel staffLabel ;
         JTextField staffField;
+        JLabel staffLabel_2 ;
+        JTextField staffField_2;
         JButton submit ;
+
+        JTextField courseChooseField ;
+        JButton ok;
 
         StaffManagerImpl staffManager = new StaffManagerImpl();
         TeacherManagerImpl teacherManager = new TeacherManagerImpl();
         public TeacherPanel() {
             setLayout(new GridLayout(1, 2));
+
             leftPanel = new JPanel();
             leftPanel.setLayout(new GridLayout(4, 1));
             leftPanel.add(new AddCoursePanel());
@@ -82,18 +91,69 @@ public class TeacherUI extends JFrame {
             rightPanel = new JPanel();
             GridBagLayout layout = new GridBagLayout();
             rightPanel.setLayout(layout);
-             courseLabel = new JLabel("Course ID:");
+            courseLabel_2 = new JLabel("Courses selection: ");
+            courseChooseField = new JTextField();
+            staffLabel_2 = new JLabel("Staff: ");
+            staffField_2 = new JTextField();
+            ok = new JButton("ok");
+
+            model_2 = new CourseStaffChooseModel();
+            jTable_2 = new JTable(model_2);
+
+            JScrollPane scrollPane_2 = new JScrollPane(jTable_2);
+            rightPanel.add(courseLabel_2);
+            rightPanel.add(courseChooseField);
+            rightPanel.add(staffLabel_2);
+            staffLabel_2.setVisible(false);
+            rightPanel.add(staffField_2);
+            staffField_2.setVisible(false);
+            rightPanel.add(ok);
+            rightPanel.add(scrollPane_2);
+
+            GridBagConstraints s = new GridBagConstraints();
+            s.fill = GridBagConstraints.HORIZONTAL;
+            s.gridwidth = 1;
+            s.weightx = 0;
+            s.weighty = 0;
+            layout.setConstraints(courseLabel_2, s);
+            s.fill = GridBagConstraints.HORIZONTAL;
+            s.gridwidth = 4;
+            s.weightx = 1;
+            s.weighty = 0;
+            layout.setConstraints(courseChooseField, s);
+            s.gridwidth = 1;
+            s.weightx = 0;
+            s.weighty = 0;
+            layout.setConstraints(staffLabel_2, s);
+            s.fill = GridBagConstraints.HORIZONTAL;
+            s.gridwidth = 1;
+            s.weightx = 1;
+            s.weighty = 0;
+            layout.setConstraints(staffField_2, s);
+            s.gridwidth = 0;
+            s.weightx = 1;
+            s.weighty = 0;
+            layout.setConstraints(ok, s);
+
+            s.fill = GridBagConstraints.BOTH;
+            s.gridwidth = 0;
+            s.weightx = 1;
+            s.weighty = 1;
+            layout.setConstraints(scrollPane_2, s);
+
+
+            courseLabel = new JLabel("Course ID: ");
             courseField = new JTextField();
-            staffLabel = new JLabel("Staff");
+            staffLabel = new JLabel("Staff: ");
             staffField = new JTextField();
             submit = new JButton("Submit");
 
             model = new CourseStaffModel();
-            jTable = new JTable(model);
+            jTable_1 = new JTable(model);
             TableCellRenderer buttonRenderer = new JTableButtonRenderer();
 
-            jTable.getColumn("Operation").setCellRenderer(buttonRenderer);
-            JScrollPane scrollPane = new JScrollPane(jTable);
+            jTable_1.getColumn("Operation").setCellRenderer(buttonRenderer);
+            JScrollPane scrollPane = new JScrollPane(jTable_1);
             rightPanel.add(courseLabel);
             rightPanel.add(courseField);
             rightPanel.add(staffLabel);
@@ -101,14 +161,13 @@ public class TeacherUI extends JFrame {
             rightPanel.add(submit);
             rightPanel.add(scrollPane);
 
-            GridBagConstraints s = new GridBagConstraints();
             s.fill = GridBagConstraints.HORIZONTAL;
             s.gridwidth = 1;
             s.weightx = 0;
             s.weighty = 0;
             layout.setConstraints(courseLabel, s);
             s.fill = GridBagConstraints.HORIZONTAL;
-            s.gridwidth = 1;
+            s.gridwidth = 3;
             s.weightx = 1;
             s.weighty = 0;
             layout.setConstraints(courseField, s);
@@ -117,7 +176,7 @@ public class TeacherUI extends JFrame {
             s.weighty = 0;
             layout.setConstraints(staffLabel, s);
             s.fill = GridBagConstraints.HORIZONTAL;
-            s.gridwidth = 1;
+            s.gridwidth = 3;
             s.weightx = 1;
             s.weighty = 0;
             layout.setConstraints(staffField, s);
@@ -131,9 +190,8 @@ public class TeacherUI extends JFrame {
             s.weightx = 1;
             s.weighty = 1;
             layout.setConstraints(scrollPane, s);
-
-
             add(rightPanel);
+
 
             submit.addMouseListener(new MouseAdapter() {
                 @Override
@@ -151,6 +209,22 @@ public class TeacherUI extends JFrame {
                         List<StaffTakeCourseRecord> records = teacherManager.queryCourseGrades(teacher.getNumber());
                         model.setRecords(records);
                         model.fireTableDataChanged();
+                    }
+
+                }
+            });
+
+            ok.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    String courseID = courseChooseField.getText();
+                    if (!courseID.equals("")) {
+                        List<StaffTakeCourseRecord> records = staffManager.queryCourseSelection(courseID, teacher);
+                        model_2.setRecords(records);
+                        model_2.fireTableDataChanged();
+                    }else {
+                        JOptionPane.showMessageDialog(rightPanel, "The Course's ID is empty !!!", "Alert", JOptionPane.WARNING_MESSAGE);
                     }
 
                 }
@@ -234,7 +308,11 @@ public class TeacherUI extends JFrame {
                         String course = courseField.getText();
                         String name = nameField.getText();
                         String classHour = classHourField.getText();
-                        courseManager.addCourse(course, name, Integer.parseInt(classHour), teacher.getNumber());
+                        try {
+                            courseManager.addCourse(course, name, Integer.parseInt(classHour), teacher.getNumber());
+                        } catch (Exception ee) {
+                            System.out.println("Can not add Course!!!");
+                        }
                     }
                 });
             }
@@ -291,11 +369,15 @@ public class TeacherUI extends JFrame {
                         } else if (fail.isSelected()) {
                             grade = "fail";
                         } else {
-                            //todo reminder
+                            JOptionPane.showMessageDialog(teacherPanel, "Please select the grade!!!", "Alert", JOptionPane.WARNING_MESSAGE);
                             System.out.println("grade is not select");
                         }
+                        try {
+                            courseManager.updateGrade(teacher.getNumber(), course, staff, grade);
+                        }catch (Exception e1){
+                            System.out.println("Can not update the Grade!!!");
+                        }
 
-                        courseManager.updateGrade(teacher.getNumber(), course, staff, grade);
                     }
                 });
             }
@@ -376,7 +458,7 @@ public class TeacherUI extends JFrame {
                         super.mouseClicked(e);
                         String number = courseField.getText();
                         if (number.equals("")) {
-                            //todo 提醒为空
+                            JOptionPane.showMessageDialog(teacherPanel, "The Course's ID is empty !!!", "Alert", JOptionPane.WARNING_MESSAGE);
                         } else {
                             courseManager.deleteCourse(number);
                         }
@@ -444,6 +526,81 @@ public class TeacherUI extends JFrame {
                             button.setText("Accepted");
                         }
                         value = button;
+                }
+                return value;
+            }
+
+            public List<StaffTakeCourseRecord> getRecords() {
+                return records;
+            }
+
+            public void setRecords(List<StaffTakeCourseRecord> records) {
+                this.records = records;
+            }
+
+            public void addRecord(StaffTakeCourseRecord record) {
+                this.records.add(record);
+            }
+
+            public StaffTakeCourseRecord getRecord(int index){
+                if (index>=records.size()){
+                    return null;
+                }
+                return records.get(index);
+            }
+        }
+
+        class CourseStaffChooseModel extends AbstractTableModel {
+
+            String[] columns = new String[]{
+                    "Course Name", "Staff Number", "Staff Name", "Department"
+            };
+
+            List<StaffTakeCourseRecord> records;
+
+            public CourseStaffChooseModel() {
+                records = new ArrayList<>();
+            }
+
+
+            public CourseStaffChooseModel(List<StaffTakeCourseRecord> records) {
+                this.records = records;
+            }
+
+
+            //设置每一列的名字
+            @Override
+            public String getColumnName(int column) {
+                return columns[column];
+            }
+
+
+            @Override
+            public int getRowCount() {
+                return records.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return columns.length;
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Object value = null;
+                switch (columnIndex) {
+                    case 0:
+                        value = records.get(rowIndex).getCourseName();
+                        break;
+                    case 1:
+                        value = records.get(rowIndex).getStaffNumber();
+                        break;
+                    case 2:
+                        value = records.get(rowIndex).getStaffName();
+                        break;
+                    case 3:
+                        value = records.get(rowIndex).getStaffDepart();
+                        break;
                 }
                 return value;
             }

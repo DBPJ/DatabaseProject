@@ -1,6 +1,5 @@
 package manager.impl;
 
-import dao.impl.CourseDaoImpl;
 import dao.impl.StaffDaoImpl;
 import entity.*;
 import manager.IStaffManager;
@@ -92,6 +91,10 @@ public class StaffManagerImpl implements IStaffManager {
         return staffDao.queryCourseRecord(courseID,staffNumber);
     }
 
+    @Override
+    public List<StaffTakeCourseRecord> queryCourseSelection(String courseID, Teacher teacher) {
+        return staffDao.queryCourseSelection(courseID, teacher);
+    }
 
     @Override
     public boolean applyResit(String staffNumber, String courseID) {

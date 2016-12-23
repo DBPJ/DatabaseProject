@@ -5,8 +5,8 @@ import entity.*;
 import util.JDBCUtil;
 
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jindiwei on 2016/12/13.
@@ -49,6 +49,7 @@ public class StaffDaoImpl implements IStaffDao {
     public boolean deleteStaff(Director director,String number) {
         Connection conn = util.getConnection();
         String department_name = director.getDepartmentName();
+        System.out.println("!!" + director.getDepartmentName() + " " + director.getNumber());
         String sql = "SELECT Department_name FROM mydb.Staff where number = \""+ number +"\";";
         Statement stmt = null;
         boolean res = false;
@@ -58,10 +59,11 @@ public class StaffDaoImpl implements IStaffDao {
             e.printStackTrace();
         }
         try {
-            System.out.println(sql);
             ResultSet rs = stmt.executeQuery(sql);
             if(rs.next()){
+                System.out.println("1");
                 String name = rs.getString(1);
+                System.out.println(name + " " + department_name);
                 if(name.equals(department_name)){
                     System.out.println("RRRR");
                     sql = "DELETE FROM mydb.Staff where number = \"" + number + "\";";
@@ -73,6 +75,7 @@ public class StaffDaoImpl implements IStaffDao {
                     }
                 }
                 else{
+                    System.out.println("2");
                     return false;
                 }
             }
@@ -502,6 +505,36 @@ public class StaffDaoImpl implements IStaffDao {
                 record.setGrade(rs.getString("grade"));
                 record.setResit(rs.getString("resit"));
                 record.setStaffNumber(rs.getString("Staff_number"));
+                records.add(record);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            util.close(rs,pst,conn);
+        }
+        return records;
+    }
+
+
+    @Override
+    public List<StaffTakeCourseRecord> queryCourseSelection(String courseID, Teacher teacher) {
+        Connection conn = util.getConnection();
+        String sql = "select c.name, a.Staff_number, b.name, b.Department_name from mydb.Staff_take_Course a, Staff b, Course c where a.Course_ID = ?" +
+                "and a.Staff_number = b.number and  a.Course_ID = c.ID and c.Teacher_number = ?";
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        List<StaffTakeCourseRecord> records = new ArrayList<>();
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, courseID);
+            pst.setString(2, teacher.getNumber());
+            rs = pst.executeQuery();
+            while (rs.next()){
+                StaffTakeCourseRecord record = new StaffTakeCourseRecord();
+                record.setCourseName(rs.getString(1));
+                record.setStaffNumber(rs.getString(2));
+                record.setStaffName(rs.getString(3));
+                record.setStaffDepart(rs.getString(4));
                 records.add(record);
             }
         } catch (SQLException e) {

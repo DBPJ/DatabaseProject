@@ -148,6 +148,7 @@ public class CourseDaoImpl implements ICourseDao {
 
         Connection conn = util.getConnection();
         String sql = "UPDATE Staff_take_Course set grade = ?,resit = ? where Course_ID = ? and Staff_number = ?";
+
         PreparedStatement pst = null;
         boolean res = false;
         try{

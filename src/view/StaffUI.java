@@ -153,7 +153,6 @@ public class StaffUI extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
-//                    todo: add mouse listener
                     String courseID = courseField.getText();
                     courseManager.selectCourse(courseID,staff.getNumber());
                 }

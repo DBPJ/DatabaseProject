@@ -140,6 +140,7 @@ public class CEOUI extends JFrame {
                 case 0: {
                     DirectorManagerImpl directorManager = new DirectorManagerImpl();
                     ArrayList<Director> directors = directorManager.queryDirectors();
+                    System.out.println(directors.size());
                     dtm = new DirectorTableModel(directors);
                     table.setModel(dtm);
                     break;

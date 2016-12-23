@@ -1,6 +1,9 @@
 package view;
 
-import entity.*;
+import entity.Director;
+import entity.Gender;
+import entity.Staff;
+import entity.TrainPlan;
 import manager.impl.StaffManagerImpl;
 import manager.impl.TrainingPlanManagerImpl;
 
@@ -206,7 +209,6 @@ public class DirectorUI extends JFrame {
                     String salary = salartField.getText();
                     String additionrate = additionrateField.getText();
                     boolean isEmpty = false;
-                    //todo: 点击submit时检查Type？
                     if (number.length() == 0) {
                         isEmpty = true;
                     }
@@ -279,8 +281,7 @@ public class DirectorUI extends JFrame {
                     if (number.length() == 0) {
                         JOptionPane.showMessageDialog(DeleteStaffPanel.this, "The Staff's ID is empty !!!", "Alert", JOptionPane.WARNING_MESSAGE);
                     } else {
-                        // TODO : where get the director object
-                        boolean rt = staffManager.deleteStaffInfo("人事", number);
+                        boolean rt = staffManager.deleteStaffInfo(director.getDepartmentName(), number);
                         if (rt) {
                             JOptionPane.showMessageDialog(DeleteStaffPanel.this, "Succeed !!!");
                         } else {
@@ -397,8 +398,7 @@ public class DirectorUI extends JFrame {
                     if (number.length() == 0) {
                         JOptionPane.showMessageDialog(QueryOrModifyPanel.this, "The Staff's ID is empty !!!", "Alert", JOptionPane.WARNING_MESSAGE);
                     } else {
-                        // TODO : where get the director object
-                        staff = staffManager.getStaffInfo("人事", number);
+                        staff = staffManager.getStaffInfo(director.getDepartmentName(), number);
                         if (staff == null) {
                             JOptionPane.showMessageDialog(QueryOrModifyPanel.this, "Sorry, Something is wrong !!!", "Error", JOptionPane.ERROR_MESSAGE);
                         } else {
@@ -410,8 +410,12 @@ public class DirectorUI extends JFrame {
                             locationField.setText(staff.getLocation());
                             salartField.setText(String.valueOf(staff.getSalary()));
                             additionrateField.setText(String.valueOf(staff.getAdditionRate()));
-                            // TODO :注意检查返回值
-                            genderCB.setActionCommand(staff.getGender().toString());
+                            if(staff.getGender().name().equals("MALE")) {
+                                genderCB.setSelectedIndex(0);
+                            }
+                            else{
+                                genderCB.setSelectedIndex(1);
+                            }
                         }
                     }
                 }
@@ -458,8 +462,7 @@ public class DirectorUI extends JFrame {
                         staff_new.setSalary(Double.valueOf(salary));
                         staff_new.setAdditionRate(Double.valueOf(additionrate));
 
-                        //TODO : where to get the department name ?
-                        boolean rt = staffManager.updateStaffInfo("人事", number, staff);
+                        boolean rt = staffManager.updateStaffInfo(director.getDepartmentName(), number, staff_new);
                         if (rt) {
                             staff = staff_new;
                             JOptionPane.showMessageDialog(QueryOrModifyPanel.this, "Succeed !!!");
@@ -467,7 +470,7 @@ public class DirectorUI extends JFrame {
                             JOptionPane.showInternalMessageDialog(QueryOrModifyPanel.this, "Sorry, Something is wrong !!!", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } else {
-                        JOptionPane.showMessageDialog(QueryOrModifyPanel.this, "The Staff's information is incomple !!!", "Alert", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(QueryOrModifyPanel.this, "The Staff's information is incomplete !!!", "Alert", JOptionPane.WARNING_MESSAGE);
                     }
                 }
             });
@@ -485,8 +488,12 @@ public class DirectorUI extends JFrame {
                         locationField.setText(staff.getLocation());
                         salartField.setText(String.valueOf(staff.getSalary()));
                         additionrateField.setText(String.valueOf(staff.getAdditionRate()));
-                        // TODO :注意检查返回值
-                        genderCB.setSelectedIndex(0);
+                        if(staff.getGender().name().equals("MALE")) {
+                            genderCB.setSelectedIndex(0);
+                        }
+                        else{
+                            genderCB.setSelectedIndex(1);
+                        }
                     }
                 }
             });
@@ -847,7 +854,7 @@ public class DirectorUI extends JFrame {
             return course_list;
         }
     }
-
 }
+
 
 
