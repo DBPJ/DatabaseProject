@@ -3,7 +3,6 @@ package dao;
 import entity.Course;
 import entity.Staff;
 import entity.Teacher;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.List;
 import java.util.Map;
@@ -104,4 +103,12 @@ public interface ICourseDao {
     public boolean updateResit(String courseID, String staffNumber, String resit);
 
     public boolean selectCourse(String courseID, String staffNumber);
+
+    /**
+     *
+     * @param teacher 教师对象
+     * @param grades 成绩的list
+     * @return
+     */
+    boolean batchUpdateCourseGrade(Teacher teacher, List<String[]> grades);
 }
