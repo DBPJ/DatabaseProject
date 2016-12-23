@@ -40,9 +40,9 @@ public class TeacherUI extends JFrame {
 
     public static void main(String[] args) {
         Teacher teacher = new Teacher();
-        teacher.setNumber("TR01001");
-        teacher.setName("李敏");
-        teacher.setGender("male");
+        teacher.setNumber("TR01002");
+        teacher.setName("高隽");
+        teacher.setGender("gemale");
         teacher.setPhoneNumber((long) 12345);
         teacher.setEmail("haha@x.com");
         TeacherUI teacherUI = new TeacherUI(teacher);
@@ -79,12 +79,11 @@ public class TeacherUI extends JFrame {
         TeacherManagerImpl teacherManager = new TeacherManagerImpl();
         public TeacherPanel() {
             setLayout(new GridLayout(1, 2));
-
             leftPanel = new JPanel();
             leftPanel.setLayout(new GridLayout(4, 1));
             leftPanel.add(new AddCoursePanel());
             leftPanel.add(new UpdateGradePanel());
-            leftPanel.add(new BatchAddCoursePanel());
+            leftPanel.add(new BatchUpdatePanel());
             leftPanel.add(new DeleteCoursePanel());
             add(leftPanel);
 
@@ -342,8 +341,8 @@ public class TeacherUI extends JFrame {
                 gradeGroup = new ButtonGroup();
                 gradeGroup.add(pass);
                 gradeGroup.add(fail);
-                cancel = new JButton("Cancel:");
-                submit = new JButton("Submit:");
+                cancel = new JButton("Cancel");
+                submit = new JButton("Submit");
 
 
                 setLayout(new GridLayout(2, 4));
@@ -383,7 +382,7 @@ public class TeacherUI extends JFrame {
             }
         }
 
-        class BatchAddCoursePanel extends JPanel {
+        class BatchUpdatePanel extends JPanel {
             JLabel filenameLabel;
             JTextField filenameField;
             JButton cancel;
@@ -391,7 +390,7 @@ public class TeacherUI extends JFrame {
 
             CourseManagerImpl courseManager = new CourseManagerImpl();
 
-            BatchAddCoursePanel() {
+            BatchUpdatePanel() {
                 setLayout(new GridLayout(1, 4));
                 filenameLabel = new JLabel("File path:");
                 add(filenameLabel);
@@ -402,7 +401,7 @@ public class TeacherUI extends JFrame {
                 submit = new JButton("submit");
                 add(submit);
 
-                setBorder(BorderFactory.createTitledBorder("Batch Add Course"));
+                setBorder(BorderFactory.createTitledBorder("Batch Update Grades"));
 
                 cancel.addMouseListener(new MouseAdapter() {
                     @Override
@@ -417,7 +416,12 @@ public class TeacherUI extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
                         String filename = filenameField.getText();
-                        courseManager.addCourses(teacher, filename);
+                        if(!filename.equals("")) {
+                            courseManager.batchUpdateGrade(teacher.getNumber(), filename);
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(teacherPanel, "The file path is empty !!!", "Alert", JOptionPane.WARNING_MESSAGE);
+                        }
                     }
                 });
             }

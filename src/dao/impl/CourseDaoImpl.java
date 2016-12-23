@@ -296,6 +296,69 @@ public class CourseDaoImpl implements ICourseDao {
         return res;
     }
 
+    @Override
+    public boolean batchUpdateCourseGrade(Teacher teacher, List<String[]> grades) {
+        String courseID;
+        String staffNumber;
+        String grade;
+        //检查是否可以更新
+        //1 第一次上传成绩可以
+        //2 补考完之后可以修改成绩
+        Connection conn = util.getConnection();
+        String sql = "UPDATE Staff_take_Course set grade = ?,resit = ? where Course_ID = ? and Staff_number = ?";
+        for(int i = 0 ; i < grades.size() ; i ++) {
+            System.out.println("This is IIIIII : " + i);
+            courseID = grades.get(i)[0];
+            staffNumber = grades.get(i)[1];
+            grade = grades.get(i)[2];
+            boolean valiadate = validateAuthority(teacher, courseID);
+            if (!valiadate) {
+                //todo: reminder
+                System.out.println("have no authority to update the course : ID = " + courseID);
+                continue;
+            }
+
+            boolean firstTime = firstTime(staffNumber, courseID);
+            boolean afterResit = afterResit(staffNumber, courseID);
+            if (!firstTime && !afterResit) {
+                System.out.println("time error");
+                continue;
+            }
+
+
+
+            PreparedStatement pst = null;
+            boolean res = false;
+            try {
+                pst = conn.prepareStatement(sql);
+                pst.setString(1, grade);
+                if (grade.equals("pass")) {
+                    pst.setString(2, "noneed");
+                } else {
+                    pst.setString(2, "need");
+                }
+                pst.setString(3, courseID);
+                pst.setString(4, staffNumber);
+                pst.executeUpdate();
+
+                if (firstTime) {
+                    String sql2 = "Update Course set grade_upload_time = ? where ID = ?";
+                    pst = conn.prepareStatement(sql2);
+                    pst.setDate(1, new java.sql.Date(new java.util.Date().getTime()));
+                    pst.setString(2, courseID);
+                    pst.executeUpdate();
+                }
+                res = true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                util.close(null, pst, conn);
+            }
+            return res;
+        }
+        return false;
+    }
+
     private boolean validateAuthority(Teacher teacher, String courseID){
         Connection conn = util.getConnection();
         String sql = "select Teacher_number from Course where ID = ?";

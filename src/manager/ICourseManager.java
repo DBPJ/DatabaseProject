@@ -49,6 +49,15 @@ public interface ICourseManager {
      */
     public boolean updateGrade(String teacherNumber, String ID, String staffNumber, String grade);
 
+
+    /**
+     * 批量更新成绩信息
+     * @param teachernumber 教师编号
+     * @param filepath 文件路径
+     * @return
+     */
+    public boolean batchUpdateGrade(String teachernumber, String filepath);
+
     /**
      *
      * @param teacher 教师对象，在view里应该维护一个教师的对象

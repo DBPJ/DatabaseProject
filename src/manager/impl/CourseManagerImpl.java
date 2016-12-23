@@ -74,6 +74,29 @@ public class CourseManagerImpl implements ICourseManager {
         return courseDao.updateCourseGrade(teacher,ID,staffNumber,grade);
     }
 
+    public boolean batchUpdateGrade(String teachernumber, String filepath){
+        Teacher teacher = new Teacher();
+        teacher.setNumber(teachernumber);
+        List<String[]> grades = new ArrayList<>();
+        InputStream inp = null;
+        try {
+            inp = new FileInputStream(filepath);
+            Workbook wb = WorkbookFactory.create(inp);
+            Sheet sheet = wb.getSheetAt(0);
+            for (int i = sheet.getFirstRowNum() + 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                String[] grade = new String[3];
+                grade[0] = (row.getCell(0).getStringCellValue());
+                grade[1] = (row.getCell(1).getStringCellValue());
+                grade[2] = (row.getCell(2).getStringCellValue());
+                grades.add(grade);
+            }
+        } catch (InvalidFormatException | IOException e) {
+            e.printStackTrace();
+        }
+        return courseDao.batchUpdateCourseGrade(teacher, grades);
+    }
+
     @Override
     public List<Staff> queryResits(Teacher teacher, String courseID) {
         return courseDao.queryResits(teacher,courseID);
