@@ -220,6 +220,11 @@ public class DirectorUI extends JFrame {
                         isEmpty = true;
                     }
 
+                    //判定权限
+                    if (!department_name.equals(director.getDepartmentName())){
+                        isEmpty = true;
+                    }
+
                     if (location.length() == 0) {
                         isEmpty = true;
                     }
@@ -387,7 +392,7 @@ public class DirectorUI extends JFrame {
             cancel = new JButton("Cancel");
             add(cancel);
 
-            setBorder(BorderFactory.createTitledBorder("Add Staff"));
+            setBorder(BorderFactory.createTitledBorder("Query Staff"));
 
 
             search.addMouseListener(new MouseAdapter() {
@@ -537,7 +542,7 @@ public class DirectorUI extends JFrame {
             j2 = new JLabel();
             j3 = new JLabel();
             resultPanel = new ResultPanel(hasplan);
-            resultPanel.setBackground(Color.PINK);//为了看出效果，设置了颜色
+//            resultPanel.setBackground(Color.PINK);//为了看出效果，设置了颜色
 
             GridBagLayout layout = new GridBagLayout();
             this.setLayout(layout);
@@ -584,6 +589,8 @@ public class DirectorUI extends JFrame {
             s.fill = GridBagConstraints.BOTH;
             layout.setConstraints(resultPanel, s);
 
+
+
             commit.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -620,6 +627,8 @@ public class DirectorUI extends JFrame {
                 }
 
             });
+
+
         }
     }
 

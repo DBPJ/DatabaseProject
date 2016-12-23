@@ -111,4 +111,10 @@ public interface IStaffDao {
 
     public List<StaffTakeCourseRecord> queryStaffCourseGrades();
 
+
+    /**
+     * 为所有考试通过的人增加10%
+     */
+    public void addAdditionalRate();
+
 }

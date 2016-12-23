@@ -22,7 +22,10 @@ public class TrainingPlanDaoImpl implements ITrainPlanDao {
     public boolean addTrainPlan(TrainPlan trainPlan) {
         Connection conn  = util.getConnection();
         String sql = "insert into Training_Plan(Course_ID, Department_name,type) values(?,?,?)";
+        String sql2 = "select number from Staff where Department_name = ?";
+        String sql3 = "insert into Staff_take_Course(Course_ID,Staff_number) values(?,?)";
         PreparedStatement pst = null;
+        ResultSet rs = null;
         boolean res = false;
         try{
             pst = conn.prepareStatement(sql);
@@ -31,6 +34,20 @@ public class TrainingPlanDaoImpl implements ITrainPlanDao {
             pst.setString(3,trainPlan.getType());
             pst.executeUpdate();
             res = true;
+
+            //必修课，为所有本部门员工选
+            if (trainPlan.getType().equals("required")){
+                pst = conn.prepareStatement(sql2);
+                pst.setString(1,trainPlan.getDepartmentName());
+                rs = pst.executeQuery();
+                while (rs.next()){
+                    String number = rs.getString("number");
+                    pst = conn.prepareStatement(sql3);
+                    pst.setString(1,trainPlan.getCourseID());
+                    pst.setString(2,number);
+                    pst.executeUpdate();
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {

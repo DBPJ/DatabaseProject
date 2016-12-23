@@ -106,4 +106,6 @@ public interface IStaffManager {
     public List<StaffTakeCourseRecord> queryStaffCourseGrades();
 
     public Staff queryStaff(String staffNumber);
+
+    public void addRate();
 }
